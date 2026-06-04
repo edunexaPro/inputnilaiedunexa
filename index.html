@@ -29,6 +29,7 @@
 
         .history-box { background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px dashed #cbd5e1; min-height: 40px; display: flex; flex-wrap: wrap; gap: 6px; }
         .badge { background: #e2e8f0; color: #475569; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid #cbd5e1; cursor: pointer; }
+        .badge:hover { background: #cbd5e1; }
 
         .siswa-info-flex { display: flex; justify-content: space-between; align-items: center; }
         .jml-badge { background: var(--brand); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
@@ -72,7 +73,7 @@
             <option>Pend Pancasila</option><option>B Inggris</option><option>Agama</option>
             <option>Seni Budaya</option><option>PJOK</option><option>Koding</option><option>B Jawa</option>
         </select>
-        <label>Materi Terinput di Mapel Ini:</label>
+        <label>Materi Terinput di Mapel Ini (Ketuk untuk memilih):</label>
         <div id="riwayatMateri" class="history-box"></div>
     </div>
 
@@ -107,7 +108,6 @@
     let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
     let daftarSiswa = JSON.parse(localStorage.getItem('db_siswa_v8')) || [];
 
-    // Mengatur otomatis tanggal kalender ke hari ini saat aplikasi dibuka
     function setTanggalHariIni() {
         const hariIni = new Date();
         const yyyy = hariIni.getFullYear();
@@ -163,7 +163,6 @@
         }
     }
 
-    // Mengembalikan fungsi gantiMapel bawaan asli Anda agar tidak memicu error
     function gantiMapel() {
         document.getElementById('materi').value = "";
         const inputs = document.querySelectorAll('.nilai-input');
@@ -179,10 +178,26 @@
         if (dbNilai[mapel] && Object.keys(dbNilai[mapel]).length > 0) {
             Object.keys(dbNilai[mapel]).forEach(m => {
                 const b = document.createElement('span');
-                b.className = 'badge'; b.innerText = m; box.appendChild(b);
+                b.className = 'badge'; 
+                b.innerText = m; 
+                // Mengembalikan fungsi klik badge asli Anda agar nama materi masuk ke kolom input
+                b.onclick = function() { loadMateriLama(m); };
+                box.appendChild(b);
             });
         } else {
             box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
+        }
+    }
+
+    // Mengembalikan fungsi load data lama bawaan Anda agar nilai lama tampil di input kotak
+    function loadMateriLama(namaMateri) {
+        document.getElementById('materi').value = namaMateri;
+        const mapel = document.getElementById('mapel').value;
+        const inputs = document.querySelectorAll('.nilai-input');
+        if (dbNilai[mapel] && dbNilai[mapel][namaMateri]) {
+            inputs.forEach((inp, idx) => {
+                inp.value = dbNilai[mapel][namaMateri][idx] !== undefined ? dbNilai[mapel][namaMateri][idx] : "";
+            });
         }
     }
 
@@ -227,14 +242,12 @@
         if (!materi) return alert("Tuliskan atau pilih materinya terlebih dahulu!");
         if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data kosong!");
 
-        // Mengubah format tanggal kalender YYYY-MM-DD ke DD/MM/YYYY saat tombol ekspor ditekan
         let tglFormatExcel = "";
         if (tglInput) {
             const part = tglInput.split('-');
             if (part.length === 3) tglFormatExcel = `${part[2]}/${part[1]}/${part[0]}`;
         }
 
-        // Struktur pembentukan dokumen CSV asli Anda
         let materis = Object.keys(dbNilai[mapel]);
         let csv = "Nama;" + materis.join(";") + "\n";
         
@@ -244,7 +257,6 @@
             csv += row + "\n";
         });
 
-        // Menyisipkan tanggal berformat DD-MM-YYYY ke judul file CSV Anda
         const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
         const namaFile = `Rekap_${mapel}${tglFormatFile}.csv`;
         
@@ -260,7 +272,6 @@
         }
     }
 
-    // Memuat nama siswa dan tanggal default hari ini di awal
     renderSiswa();
     setTanggalHariIni();
 </script>
