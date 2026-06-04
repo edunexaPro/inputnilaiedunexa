@@ -108,7 +108,6 @@
     let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
     let daftarSiswa = JSON.parse(localStorage.getItem('db_siswa_v8')) || [];
 
-    // Mengatur default tanggal HTML (Format wajib YYYY-MM-DD agar elemen kalender HP mengenalnya)
     function setTanggalHariIni() {
         const hariIni = new Date();
         const yyyy = hariIni.getFullYear();
@@ -119,13 +118,200 @@
         document.getElementById('tanggal').value = yyyy + '-' + mm + '-' + dd;
     }
 
-    // Fungsi pembantu mengubah format YYYY-MM-DD menjadi DD/MM/YYYY untuk Excel
     function formatTanggalIndo(stringTanggal) {
         if (!stringTanggal) return "";
-        const bagian = stringTanggal.split('-'); // [YYYY, MM, DD]
+        const bagian = stringTanggal.split('-'); 
         if (bagian.length !== 3) return stringTanggal;
-        return `${bagian[2]}/${bagian[1]}/${bagian[0]}`; // DD/MM/YYYY
+        return `${bagian[2]}/${bagian[1]}/${bagian[0]}`; 
     }
 
     function toggleSetup() {
-        const inputArea = document.
+        const inputArea = document.getElementById('inputArea');
+        const setupArea = document.getElementById('setupArea');
+        if (setupArea.style.display === 'none' || setupArea.style.display === '') {
+            setupArea.style.display = 'block'; inputArea.style.display = 'none';
+            document.getElementById('rawSiswa').value = daftarSiswa.join('\n');
+        } else {
+            setupArea.style.display = 'none'; inputArea.style.display = 'block';
+        }
+        window.scrollTo(0,0);
+    }
+
+    function simpanSiswa() {
+        const teks = document.getElementById('rawSiswa').value;
+        daftarSiswa = teks.split('\n').map(s => s.trim()).filter(s => s !== "");
+        localStorage.setItem('db_siswa_v8', JSON.stringify(daftarSiswa));
+        renderSiswa(); toggleSetup();
+    }
+
+    function renderSiswa() {
+        const container = document.getElementById('listSiswaContainer');
+        container.innerHTML = "";
+        document.getElementById('displayJml').innerText = daftarSiswa.length + " Siswa";
+        
+        daftarSiswa.forEach((nama, idx) => {
+            const row = document.createElement('div');
+            row.className = 'siswa-row';
+            row.innerHTML = `
+                <div class="nama-siswa">${idx + 1}. ${nama}</div>
+                <input type="number" class="nilai-input" placeholder="0" 
+                    inputmode="numeric" onfocus="this.select()" 
+                    onkeydown="pindahBaris(event, ${idx})">`;
+            container.appendChild(row);
+        });
+        refreshRiwayat();
+    }
+
+    function pindahBaris(e, index) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const inputs = document.querySelectorAll('.nilai-input');
+            if (inputs[index + 1]) inputs[index + 1].focus();
+        }
+    }
+
+    function gantiMapel() {
+        document.getElementById('materi').value = "";
+        setTanggalHariIni();
+        const inputs = document.querySelectorAll('.nilai-input');
+        inputs.forEach(inp => inp.value = "");
+        refreshRiwayat();
+    }
+
+    function refreshRiwayat() {
+        const mapel = document.getElementById('mapel').value;
+        const box = document.getElementById('riwayatMateri');
+        box.innerHTML = "";
+        if (dbNilai[mapel] && Object.keys(dbNilai[mapel]).length > 0) {
+            Object.keys(dbNilai[mapel]).forEach(m => {
+                const b = document.createElement('span');
+                b.className = 'badge'; b.innerText = m; 
+                b.onclick = function() { loadMateriLama(m); };
+                box.appendChild(b);
+            });
+        } else {
+            box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
+        }
+    }
+
+    function loadMateriLama(namaMateri) {
+        document.getElementById('materi').value = namaMateri;
+        cekOtomatisNilai();
+    }
+
+    function cekOtomatisNilai() {
+        const mapel = document.getElementById('mapel').value;
+        const materi = document.getElementById('materi').value.trim();
+        const inputs = document.querySelectorAll('.nilai-input');
+
+        if (dbNilai[mapel] && dbNilai[mapel][materi]) {
+            let dataLama = dbNilai[mapel][materi];
+            
+            // Pengaman: Deteksi apakah data lama berupa Array murni atau Object baru
+            let nilaiLama = Array.isArray(dataLama) ? dataLama : (dataLama.nilai || []);
+            let tanggalLama = Array.isArray(dataLama) ? "" : (dataLama.tanggal || "");
+
+            if(tanggalLama) {
+                document.getElementById('tanggal').value = tanggalLama;
+            } else {
+                setTanggalHariIni();
+            }
+
+            inputs.forEach((inp, idx) => {
+                inp.value = nilaiLama[idx] !== undefined ? nilaiLama[idx] : "";
+            });
+        } else {
+            inputs.forEach(inp => inp.value = "");
+            setTanggalHariIni();
+        }
+    }
+
+    function simpanKeHP() {
+        const mapel = document.getElementById('mapel').value;
+        const materi = document.getElementById('materi').value.trim();
+        const tanggal = document.getElementById('tanggal').value;
+        
+        if (!materi) return alert("Tuliskan nama Materinya dulu!");
+        if (!tanggal) return alert("Pilih tanggal pelaksanaan dulu!");
+
+        if (dbNilai[mapel] && dbNilai[mapel][materi]) {
+            if (!confirm("Materi '" + materi + "' sudah ada. Perbarui data?")) return;
+        }
+        
+        const inputs = document.querySelectorAll('.nilai-input');
+        let nilai = Array.from(inputs).map(inp => inp.value || "0");
+
+        if (!dbNilai[mapel]) dbNilai[mapel] = {};
+        
+        dbNilai[mapel][materi] = {
+            nilai: nilai,
+            tanggal: tanggal
+        };
+
+        localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
+        alert("✅ Berhasil disimpan!");
+        
+        document.getElementById('materi').value = ""; 
+        inputs.forEach(inp => inp.value = "");
+        setTanggalHariIni();
+        refreshRiwayat();
+        window.scrollTo(0,0);
+    }
+
+    function resetSemester() {
+        if(confirm("Hapus semua riwayat nilai? (Daftar nama tetap aman)")) {
+            dbNilai = {};
+            localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
+            renderSiswa(); toggleSetup();
+        }
+    }
+
+    async function bagikanCSV() {
+        try {
+            const mapel = document.getElementById('mapel').value;
+            const materi = document.getElementById('materi').value.trim();
+            const tanggalInput = document.getElementById('tanggal').value;
+            
+            if (!materi) return alert("Silakan tentukan atau ketuk materi yang ingin diekspor!");
+            if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data nilai untuk materi ini tidak ditemukan!");
+
+            let dataMateri = dbNilai[mapel][materi];
+            
+            // Pengaman Ekspor: Memisahkan pembacaan Array lama atau Object baru agar tidak crash
+            let nilaiMateri = Array.isArray(dataMateri) ? dataMateri : (dataMateri.nilai || []);
+            let tglMentah = tanggalInput || (Array.isArray(dataMateri) ? "" : (dataMateri.tanggal || ""));
+            
+            let tglFormatExcel = formatTanggalIndo(tglMentah);
+            
+            let csv = "\uFEFF"; // BOM UTF-8
+            
+            csv += `Nama;"${materi.replace(/"/g, '""')}"\n`;
+            csv += `Tanggal;"${tglFormatExcel}"\n`;
+            
+            daftarSiswa.forEach((nama, idx) => {
+                let nilaiSiswa = nilaiMateri[idx] !== undefined ? nilaiMateri[idx] : "0";
+                csv += `"${nama.replace(/"/g, '""')}";${nilaiSiswa}\n`;
+            });
+
+            const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
+            const namaFile = `Edunexa_${mapel}_${materi.replace(/[^a-zA-Z0-9]/g, '_')}${tglFormatFile}.csv`;
+            const file = new File([csv], namaFile, { type: 'text/csv;charset=utf-8;' });
+
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                await navigator.share({ files: [file], title: 'Injeksi Nilai Edunexa' }).catch(() => {});
+            } else {
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(file);
+                a.download = namaFile;
+                a.click();
+            }
+        } catch (error) {
+            alert("Terjadi kesalahan sistem ekspor: " + error.message);
+        }
+    }
+
+    renderSiswa();
+    setTanggalHariIni();
+</script>
+</body>
+</html>
