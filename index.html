@@ -67,7 +67,7 @@
     <div class="card">
         <h3>2. Kontrol Mapel</h3>
         <label>Pilih Mata Pelajaran:</label>
-        <select id="mapel" onchange="refreshRiwayat()">
+        <select id="mapel" onchange="gantiMapel()">
             <option>Matematika</option><option>B Indonesia</option><option>IPAS</option>
             <option>Pend Pancasila</option><option>B Inggris</option><option>Agama</option>
             <option>Seni Budaya</option><option>PJOK</option><option>Koding</option><option>B Jawa</option>
@@ -107,7 +107,7 @@
     let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
     let daftarSiswa = JSON.parse(localStorage.getItem('db_siswa_v8')) || [];
 
-    // Fungsi otomatis pasang tanggal hari ini saat dimuat
+    // Mengatur otomatis tanggal kalender ke hari ini saat aplikasi dibuka
     function setTanggalHariIni() {
         const hariIni = new Date();
         const yyyy = hariIni.getFullYear();
@@ -135,3 +135,134 @@
         daftarSiswa = teks.split('\n').map(s => s.trim()).filter(s => s !== "");
         localStorage.setItem('db_siswa_v8', JSON.stringify(daftarSiswa));
         renderSiswa(); toggleSetup();
+    }
+
+    function renderSiswa() {
+        const container = document.getElementById('listSiswaContainer');
+        container.innerHTML = "";
+        document.getElementById('displayJml').innerText = daftarSiswa.length + " Siswa";
+        
+        daftarSiswa.forEach((nama, idx) => {
+            const row = document.createElement('div');
+            row.className = 'siswa-row';
+            row.innerHTML = `
+                <div class="nama-siswa">${idx + 1}. ${nama}</div>
+                <input type="number" class="nilai-input" placeholder="0" 
+                    inputmode="numeric" onfocus="this.select()" 
+                    onkeydown="pindahBaris(event, ${idx})">`;
+            container.appendChild(row);
+        });
+        refreshRiwayat();
+    }
+
+    function pindahBaris(e, index) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            const inputs = document.querySelectorAll('.nilai-input');
+            if (inputs[index + 1]) inputs[index + 1].focus();
+        }
+    }
+
+    // Mengembalikan fungsi gantiMapel bawaan asli Anda agar tidak memicu error
+    function gantiMapel() {
+        document.getElementById('materi').value = "";
+        const inputs = document.querySelectorAll('.nilai-input');
+        inputs.forEach(inp => inp.value = "");
+        setTanggalHariIni();
+        refreshRiwayat();
+    }
+
+    function refreshRiwayat() {
+        const mapel = document.getElementById('mapel').value;
+        const box = document.getElementById('riwayatMateri');
+        box.innerHTML = "";
+        if (dbNilai[mapel] && Object.keys(dbNilai[mapel]).length > 0) {
+            Object.keys(dbNilai[mapel]).forEach(m => {
+                const b = document.createElement('span');
+                b.className = 'badge'; b.innerText = m; box.appendChild(b);
+            });
+        } else {
+            box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
+        }
+    }
+
+    function simpanKeHP() {
+        const mapel = document.getElementById('mapel').value;
+        const materi = document.getElementById('materi').value.trim();
+        if (!materi) return alert("Tuliskan nama Materinya dulu!");
+
+        if (dbNilai[mapel] && dbNilai[mapel][materi]) {
+            if (!confirm("Materi '" + materi + "' sudah ada. Perbarui data?")) return;
+        }
+        
+        const inputs = document.querySelectorAll('.nilai-input');
+        let nilai = Array.from(inputs).map(inp => inp.value || "0");
+
+        if (!dbNilai[mapel]) dbNilai[mapel] = {};
+        dbNilai[mapel][materi] = nilai;
+
+        localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
+        alert("✅ Berhasil disimpan!");
+        
+        document.getElementById('materi').value = ""; 
+        inputs.forEach(inp => inp.value = "");
+        setTanggalHariIni();
+        refreshRiwayat();
+        window.scrollTo(0,0);
+    }
+
+    function resetSemester() {
+        if(confirm("Hapus semua riwayat nilai? (Daftar nama tetap aman)")) {
+            dbNilai = {};
+            localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
+            renderSiswa(); toggleSetup();
+        }
+    }
+
+    async function bagikanCSV() {
+        const mapel = document.getElementById('mapel').value;
+        const materi = document.getElementById('materi').value.trim();
+        const tglInput = document.getElementById('tanggal').value;
+
+        if (!materi) return alert("Tuliskan atau pilih materinya terlebih dahulu!");
+        if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data kosong!");
+
+        // Mengubah format tanggal kalender YYYY-MM-DD ke DD/MM/YYYY saat tombol ekspor ditekan
+        let tglFormatExcel = "";
+        if (tglInput) {
+            const part = tglInput.split('-');
+            if (part.length === 3) tglFormatExcel = `${part[2]}/${part[1]}/${part[0]}`;
+        }
+
+        // Struktur pembentukan dokumen CSV asli Anda
+        let materis = Object.keys(dbNilai[mapel]);
+        let csv = "Nama;" + materis.join(";") + "\n";
+        
+        daftarSiswa.forEach((nama, idx) => {
+            let row = nama;
+            materis.forEach(m => { row += ";" + (dbNilai[mapel][m][idx] || "0"); });
+            csv += row + "\n";
+        });
+
+        // Menyisipkan tanggal berformat DD-MM-YYYY ke judul file CSV Anda
+        const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
+        const namaFile = `Rekap_${mapel}${tglFormatFile}.csv`;
+        
+        const file = new File([csv], namaFile, { type: 'text/csv' });
+
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: 'Data Nilai' }).catch(() => {});
+        } else {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            a.download = namaFile;
+            a.click();
+        }
+    }
+
+    // Memuat nama siswa dan tanggal default hari ini di awal
+    renderSiswa();
+    setTanggalHariIni();
+</script>
+</body>
+</html>
