@@ -130,7 +130,6 @@
         window.scrollTo(0,0);
     }
 
-    // Perbaikan simpan nama siswa agar otomatis merender ulang tanpa eror
     function simpanSiswa() {
         const teks = document.getElementById('rawSiswa').value;
         daftarSiswa = teks.split('\n').map(s => s.trim()).filter(s => s !== "");
@@ -176,20 +175,14 @@
         const mapel = document.getElementById('mapel').value;
         const box = document.getElementById('riwayatMateri');
         box.innerHTML = "";
-        
-        if (dbNilai[mapel]) {
-            let adaData = false;
-            for (let m in dbNilai[mapel]) {
-                adaData = true;
+        if (dbNilai[mapel] && Object.keys(dbNilai[mapel]).length > 0) {
+            Object.keys(dbNilai[mapel]).forEach(m => {
                 const b = document.createElement('span');
                 b.className = 'badge'; 
                 b.innerText = m; 
-                b.setAttribute('onclick', `loadMateriLama("${m.replace(/"/g, '\\"')}")`);
+                b.onclick = function() { loadMateriLama(m); };
                 box.appendChild(b);
-            }
-            if (!adaData) {
-                box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
-            }
+            });
         } else {
             box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
         }
@@ -239,64 +232,44 @@
         }
     }
 
-    // PERBAIKAN TOTAL: Fungsi Ekspor Anti-Crash & Anti-Freeze
     async function bagikanCSV() {
-        try {
-            const mapel = document.getElementById('mapel').value;
-            const materi = document.getElementById('materi').value.trim();
-            const tglInput = document.getElementById('tanggal').value;
+        const mapel = document.getElementById('mapel').value;
+        const materi = document.getElementById('materi').value.trim();
+        const tglInput = document.getElementById('tanggal').value;
 
-            if (!materi) {
-                alert("Tuliskan atau pilih materinya terlebih dahulu!");
-                return;
-            }
+        if (!materi) return alert("Tuliskan atau pilih materinya terlebih dahulu!");
+        
+        if (!dbNilai[mapel] || !dbNilai[mapel][materi]) {
+            return alert("Data nilai materi ini belum disimpan di HP!");
+        }
 
-            // Jika data materi tidak ditemukan, ambil nilai langsung yang sedang tampil di layar kotak input siswa saat ini
-            let nilaiMateri = [];
-            if (dbNilai[mapel] && dbNilai[mapel][materi]) {
-                nilaiMateri = dbNilai[mapel][materi];
-            } else {
-                const inputs = document.querySelectorAll('.nilai-input');
-                nilaiMateri = Array.from(inputs).map(inp => inp.value || "0");
-            }
+        let tglFormatExcel = "";
+        if (tglInput) {
+            const part = tglInput.split('-');
+            if (part.length === 3) tglFormatExcel = `${part[2]}/${part[1]}/${part[0]}`;
+        }
 
-            // Konversi format tanggal YYYY-MM-DD ke DD/MM/YYYY
-            let tglFormatExcel = "";
-            if (tglInput) {
-                const part = tglInput.split('-');
-                if (part.length === 3) tglFormatExcel = `${part[2]}/${part[1]}/${part[0]}`;
-            }
+        let csv = "Nama;" + materi + "\n";
+        csv += "Tanggal;" + tglFormatExcel + "\n";
 
-            let csv = "\uFEFF"; // BOM UTF-8
-            
-            // Baris 1 & 2: Format Header Khusus Injeksi Makro Excel
-            csv += `Nama;"${materi.replace(/"/g, '""')}"\n`;
-            csv += `Tanggal;"${tglFormatExcel}"\n`;
-            
-            // Baris 3 dst: Nama dan Nilai
-            daftarSiswa.forEach((nama, idx) => {
-                let nilaiSiswa = (nilaiMateri && nilaiMateri[idx] !== undefined) ? nilaiMateri[idx] : "0";
-                csv += `"${nama.replace(/"/g, '""')}";${nilaiSiswa}\n`;
-            });
+        daftarSiswa.forEach((nama, idx) => {
+            // PERBAIKAN KRUSIAL: Pengaman ekstra menggunakan operator '&&' agar jika data per siswa belum ada, tidak memicu eror crash
+            let nilaiSiswa = (dbNilai[mapel] && dbNilai[mapel][materi] && dbNilai[mapel][materi][idx]) ? dbNilai[mapel][materi][idx] : "0";
+            csv += nama + ";" + nilaiSiswa + "\n";
+        });
 
-            const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
-            const namaFile = `Edunexa_${mapel}_${materi.replace(/[^a-zA-Z0-9]/g, '_')}${tglFormatFile}.csv`;
-            
-            const file = new File([csv], namaFile, { type: 'text/csv;charset=utf-8;' });
+        const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
+        const namaFile = `Rekap_${mapel}_${materi}${tglFormatFile}.csv`;
+        
+        const file = new File([csv], namaFile, { type: 'text/csv' });
 
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                await navigator.share({ files: [file], title: 'Injeksi Nilai Edunexa' }).catch(() => {});
-            } else {
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(file);
-                a.download = namaFile;
-                a.click();
-            }
-        } catch (error) {
-            console.log(error);
-        } finally {
-            // PENGUNCI UTAMA: Memastikan tombol materi selalu AKTIF kembali apa pun yang terjadi
-            refreshRiwayat();
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({ files: [file], title: 'Data Nilai' }).catch(() => {});
+        } else {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(file);
+            a.download = namaFile;
+            a.click();
         }
     }
 
