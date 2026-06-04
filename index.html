@@ -79,13 +79,15 @@
 
     <div class="card">
         <h3>3. Input Nilai Baru</h3>
+        
+        <!-- Tombol Input Baru dipindah ke atas Tanggal -->
+        <button class="btn-outline" style="color: var(--brand); border-color: #cbd5e1; margin-top: 0; margin-bottom: 15px; font-weight: bold;" onclick="kosongkanForm()">INPUT BARU</button>
+
         <label>Tanggal Pelaksanaan (Ulangan / Tugas):</label>
         <input type="date" id="tanggal">
 
         <label>Nama Materi (UH / Tugas / Latihan):</label>
         <input type="text" id="materi" placeholder="Misal: Perkalian, Tugas 1, dll" oninput="refreshRiwayat()">
-        
-        <button class="btn-outline" style="color: var(--danger); border-color: #feb2b2; margin-top: 0; margin-bottom: 15px;" onclick="kosongkanForm()">KOSONGKAN FORM INPUT</button>
         
         <div id="listSiswaContainer"></div>
     </div>
@@ -174,7 +176,6 @@
         refreshRiwayat();
     }
 
-    // REVISI 1: Peningkatan visual badge materi aktif
     function refreshRiwayat() {
         const mapel = document.getElementById('mapel').value;
         const box = document.getElementById('riwayatMateri');
@@ -189,7 +190,6 @@
                 b.className = 'badge'; 
                 b.innerText = m; 
                 
-                // Jika materi ini sedang aktif dipilih/diketik, ubah warnanya jadi biru cerah
                 if (m === materiAktif) {
                     b.style.background = 'var(--brand)';
                     b.style.color = 'white';
@@ -216,10 +216,9 @@
                 inp.value = dbNilai[mapel][namaMateri][idx] !== undefined ? dbNilai[mapel][namaMateri][idx] : "";
             });
         }
-        refreshRiwayat(); // Perbarui highlight warna badge saat diklik
+        refreshRiwayat();
     }
 
-    // REVISI 2: Fungsi mengosongkan judul materi dan semua nilai input siswa
     function kosongkanForm() {
         document.getElementById('materi').value = "";
         const inputs = document.querySelectorAll('.nilai-input');
@@ -284,8 +283,6 @@
         });
 
         const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
-        
-        // REVISI 3: Mengubah awalan nama file berkas ekspor menjadi Nilai_[Mapel]_[Materi]
         const namaFile = `Nilai_${mapel}_${materi}${tglFormatFile}.csv`;
         
         const file = new File([csv], namaFile, { type: 'text/csv' });
