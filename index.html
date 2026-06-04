@@ -171,18 +171,26 @@
         refreshRiwayat();
     }
 
+    // KEMBALI KE LOGIKA KLIK BADGE ASLI BAWAN KODE ANDA YANG PASTI WORK
     function refreshRiwayat() {
         const mapel = document.getElementById('mapel').value;
         const box = document.getElementById('riwayatMateri');
         box.innerHTML = "";
-        if (dbNilai[mapel] && Object.keys(dbNilai[mapel]).length > 0) {
-            Object.keys(dbNilai[mapel]).forEach(m => {
+        
+        if (dbNilai[mapel]) {
+            // Menggunakan perulangan murni untuk membaca data array mapel agar badge bisa diklik sempurna
+            let adaData = false;
+            for (let m in dbNilai[mapel]) {
+                adaData = true;
                 const b = document.createElement('span');
                 b.className = 'badge'; 
                 b.innerText = m; 
-                b.onclick = function() { loadMateriLama(m); };
+                b.setAttribute('onclick', `loadMateriLama("${m.replace(/"/g, '\\"')}")`);
                 box.appendChild(b);
-            });
+            }
+            if (!adaData) {
+                box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
+            }
         } else {
             box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
         }
@@ -240,29 +248,26 @@
         if (!materi) return alert("Tuliskan atau pilih materinya terlebih dahulu!");
         if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data nilai materi ini tidak ditemukan!");
 
-        // Konversi YYYY-MM-DD ke format DD/MM/YYYY
         let tglFormatExcel = "";
         if (tglInput) {
             const part = tglInput.split('-');
             if (part.length === 3) tglFormatExcel = `${part[2]}/${part[1]}/${part[0]}`;
         }
 
-        // PERBAIKAN FATAL: Membaca array per siswa dengan benar berdasarkan materi pilihan
         let nilaiMateri = dbNilai[mapel][materi];
-        let csv = "\uFEFF"; // BOM UTF-8 agar karakter Excel tidak berantakan
+        let csv = "\uFEFF"; 
         
-        // Baris 1: Judul Materi pilihan
+        // Baris 1: Judul Materi Pilihan
         csv += `Nama;"${materi.replace(/"/g, '""')}"\n`;
-        // Baris 2: Tanggal pelaksanaan (DD/MM/YYYY)
+        // Baris 2: Tanggal Pelaksanaan (DD/MM/YYYY)
         csv += `Tanggal;"${tglFormatExcel}"\n`;
         
-        // Baris 3 dst: Mengisi Nama Siswa dan Nilai Spesifik materi pilihan tersebut
+        // Baris 3 dst: Mengisi nama siswa dan nilai spesifik materi pilihan tersebut
         daftarSiswa.forEach((nama, idx) => {
             let nilaiSiswa = (nilaiMateri && nilaiMateri[idx] !== undefined) ? nilaiMateri[idx] : "0";
             csv += `"${nama.replace(/"/g, '""')}";${nilaiSiswa}\n`;
         });
 
-        // Judul Berkas CSV
         const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
         const namaFile = `Edunexa_${mapel}_${materi.replace(/[^a-zA-Z0-9]/g, '_')}${tglFormatFile}.csv`;
         
