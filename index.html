@@ -9,42 +9,141 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Edunexa Pro">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5402/5402377.png">
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Edunexa%20Pro%22,%22short_name%22:%22Edunexa%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f0f2f5%22,%22theme_color%22:%22%231a73e8%22,%22icons%22:[{%22src%22:%22EDUNEXA.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Edunexa%20Pro%22,%22short_name%22:%22Edunexa%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23e2e8f0%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22EDUNEXA.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
 
     <style>
-        :root { --primary: #25d366; --brand: #1a73e8; --bg: #f0f2f5; --danger: #dc3545; --gray: #6c757d; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 12px; padding-bottom: 100px; color: #333; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+        :root { 
+            --primary: #4f46e5; /* Modern Indigo */
+            --primary-hover: #4338ca;
+            --brand: #1e293b; /* Slate 800 */
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 50%, #e2e8f0 100%);
+            --card-bg: rgba(255, 255, 255, 0.65);
+            --card-border: rgba(255, 255, 255, 0.8);
+            --danger: #ef4444; 
+            --gray: #64748b; 
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg-gradient); 
+            background-attachment: fixed;
+            margin: 0; 
+            padding: 16px; 
+            padding-bottom: 110px; 
+            color: #334155; 
+        }
         
-        .header { text-align: center; padding: 10px 0; }
-        .header h1 { margin: 0; font-size: 22px; color: var(--brand); font-weight: 800; }
-        .header p { margin: 2px; font-size: 11px; color: #666; font-style: italic; }
+        .header { text-align: center; padding: 20px 0 15px 0; }
+        .header h1 { margin: 0; font-size: 24px; color: var(--brand); font-weight: 800; letter-spacing: -0.5px; }
+        .header p { margin: 4px 0 0 0; font-size: 12px; color: var(--gray); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
 
-        .card { background: white; padding: 16px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px; }
-        h3 { margin-top: 0; font-size: 14px; border-left: 4px solid var(--brand); padding-left: 10px; color: #444; text-transform: uppercase; margin-bottom: 12px; }
+        /* Desain Kartu Glassmorphism */
+        .card { 
+            background: var(--card-bg); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px);
+            padding: 20px; 
+            border-radius: 20px; 
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.6); 
+            margin-bottom: 20px; 
+        }
         
-        label { font-size: 11px; font-weight: bold; color: #888; margin-left: 5px; }
-        select, input, textarea { width: 100%; padding: 12px; margin: 6px 0 12px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
+        h3 { margin-top: 0; font-size: 14px; border-left: 4px solid var(--primary); padding-left: 12px; color: var(--brand); text-transform: uppercase; margin-bottom: 16px; font-weight: 800; letter-spacing: 0.5px; }
         
-        input[type="date"] { font-family: inherit; color: #333; }
+        label { font-size: 12px; font-weight: 700; color: #475569; margin-left: 5px; display: block; margin-bottom: 6px; }
+        
+        /* Elemen Input & Form */
+        select, input[type="text"], input[type="date"], textarea { 
+            width: 100%; 
+            padding: 14px 16px; 
+            margin-bottom: 16px; 
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid #cbd5e1; 
+            border-radius: 14px; 
+            box-sizing: border-box; 
+            font-size: 15px; 
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 500;
+            color: var(--brand);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        select:focus, input[type="text"]:focus, input[type="date"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+            background: #ffffff;
+        }
 
-        .history-box { background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px dashed #cbd5e1; min-height: 40px; display: flex; flex-wrap: wrap; gap: 6px; }
-        .badge { background: #e2e8f0; color: #475569; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid #cbd5e1; cursor: pointer; transition: 0.2s; }
-        .badge:hover { background: #cbd5e1; }
+        /* Badge & Riwayat */
+        .history-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+        .badge { 
+            background: rgba(255, 255, 255, 0.8); 
+            color: var(--gray); 
+            padding: 8px 14px; 
+            border-radius: 10px; 
+            font-size: 12px; 
+            font-weight: 700; 
+            border: 1px solid #cbd5e1; 
+            cursor: pointer; 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .badge:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
 
-        .siswa-info-flex { display: flex; justify-content: space-between; align-items: center; }
-        .jml-badge { background: var(--brand); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .siswa-info-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .jml-badge { background: var(--primary); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); }
 
-        .siswa-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f1f5f9; }
-        .nama-siswa { flex: 1; font-size: 15px; color: #333; font-weight: 500; }
-        .nilai-input { width: 75px !important; text-align: center; margin: 0 !important; font-weight: bold; border: 2px solid #e2e8f0 !important; color: var(--brand); height: 45px; border-radius: 8px; }
-        .nilai-input:focus { border-color: var(--brand) !important; outline: none; background: #f0f7ff; }
+        /* Baris Siswa */
+        .siswa-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid rgba(203, 213, 225, 0.5); }
+        .siswa-row:last-child { border-bottom: none; }
+        .nama-siswa { flex: 1; font-size: 15px; color: var(--brand); font-weight: 600; }
+        
+        .nilai-input { 
+            width: 70px !important; 
+            text-align: center; 
+            margin: 0 !important; 
+            font-weight: 800; 
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent !important; 
+            color: var(--primary); 
+            height: 48px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: 0.2s;
+        }
+        .nilai-input:focus { border-color: var(--primary) !important; transform: scale(1.05); background: #ffffff; }
 
-        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 12px; display: flex; gap: 10px; box-shadow: 0 -4px 15px rgba(0,0,0,0.08); z-index: 100; }
-        button { border: none; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .btn-main { background: var(--primary); color: white; flex: 2; padding: 16px; font-size: 16px; }
-        .btn-side { background: var(--brand); color: white; flex: 1; padding: 16px; font-size: 12px; }
-        .btn-outline { background: #f1f5f9; color: #475569; padding: 10px; border-radius: 10px; font-size: 12px; width: 100%; border: 1px solid #ddd; margin-top: 5px; }
-        .btn-danger { background: #fff5f5; color: var(--danger); border: 1px solid #feb2b2; width: 100%; margin-top: 25px; padding: 12px; font-size: 11px; }
+        /* Tombol Bawah (Sticky Footer) */
+        .footer { 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            right: 0; 
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 20px 24px 20px; 
+            display: flex; gap: 12px; 
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.05); 
+            z-index: 100; 
+            border-top: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        button { border: none; font-weight: 800; cursor: pointer; transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.5px; }
+        button:active { transform: scale(0.96); }
+        
+        .btn-side { background: #cbd5e1; color: var(--brand); flex: 1; padding: 16px; font-size: 13px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        
+        .btn-main { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); color: white; flex: 2; padding: 16px; font-size: 15px; border-radius: 16px; box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35); text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        
+        .btn-outline { background: rgba(255,255,255,0.8); color: var(--brand); padding: 14px; border-radius: 14px; font-size: 13px; width: 100%; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        
+        .btn-danger { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; width: 100%; margin-top: 25px; padding: 14px; font-size: 12px; border-radius: 14px; }
 
         #setupArea { display: none; }
     </style>
@@ -53,10 +152,7 @@
 
 <div id="inputArea">
     <div class="header">
-        <!-- Logo ditambahkan di sini -->
-        <img src="https://i.ibb.co/YSHKvYQ/logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5402/5402377.png'" alt="Logo Edunexa" style="width: 80px; height: 80px; object-fit: contain; margin-bottom: 8px;">
-        
-        <!-- Judul diubah sesuai pesanan -->
+        <img src="https://i.ibb.co/YSHKvYQ/logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5402/5402377.png'" alt="Logo Edunexa" style="width: 85px; height: 85px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));">
         <h1>INPUT NILAI EDUNEXA</h1>
         <p>Created by Tomy Satria</p>
     </div>
@@ -84,7 +180,7 @@
     <div class="card">
         <h3>3. Input Nilai Baru</h3>
         
-        <button class="btn-outline" style="color: var(--brand); border-color: #cbd5e1; margin-top: 0; margin-bottom: 15px; font-weight: bold;" onclick="kosongkanForm()">INPUT BARU</button>
+        <button class="btn-outline" style="color: var(--primary); border-color: #c7d2fe; background: #e0e7ff; margin-top: 0; margin-bottom: 20px; font-weight: 800;" onclick="kosongkanForm()">+ INPUT MATERI BARU</button>
 
         <label>Tanggal Pelaksanaan (Ulangan / Tugas):</label>
         <input type="date" id="tanggal">
@@ -92,11 +188,11 @@
         <label>Nama Materi (UH / Tugas / Latihan):</label>
         <input type="text" id="materi" placeholder="Misal: Perkalian, Tugas 1, dll" oninput="refreshRiwayat()">
         
-        <div id="listSiswaContainer"></div>
+        <div id="listSiswaContainer" style="margin-top: 20px;"></div>
     </div>
 
     <div class="footer">
-        <button class="btn-side" onclick="simpanKeHP()">SIMPAN NILAI</button>
+        <button class="btn-side" onclick="simpanKeHP()">SIMPAN</button>
         <button class="btn-main" onclick="bagikanCSV()">EKSPOR CSV</button>
     </div>
 </div>
@@ -104,10 +200,10 @@
 <div id="setupArea">
     <div class="card">
         <h3>Pengaturan Nama Siswa</h3>
-        <p style="font-size:11px; color:#666;">Masukkan nama satu per baris (Urutan Excel).</p>
+        <p style="font-size:12px; color:var(--gray); font-weight: 500;">Masukkan nama satu per baris (Urutan Excel).</p>
         <textarea id="rawSiswa" rows="18" placeholder="Contoh:&#10;Budi&#10;Ani"></textarea>
-        <button class="btn-main" style="width:100%" onclick="simpanSiswa()">SIMPAN NAMA</button>
-        <button onclick="toggleSetup()" style="width:100%; background:none; color:var(--gray); margin-top:10px;">KEMBALI</button>
+        <button class="btn-main" style="width:100%; border-radius: 14px;" onclick="simpanSiswa()">SIMPAN NAMA</button>
+        <button class="btn-outline" onclick="toggleSetup()" style="width:100%; border:none; background:transparent; color:var(--gray); margin-top:10px; box-shadow: none;">KEMBALI</button>
         <button class="btn-danger" onclick="resetSemester()">HAPUS DATABASE NILAI</button>
     </div>
 </div>
@@ -194,19 +290,20 @@
                 b.innerText = m; 
                 
                 if (m === materiAktif) {
-                    b.style.background = 'var(--brand)';
+                    b.style.background = 'var(--primary)';
                     b.style.color = 'white';
-                    b.style.borderColor = 'var(--brand)';
+                    b.style.borderColor = 'var(--primary)';
+                    b.style.boxShadow = '0 4px 10px rgba(79, 70, 229, 0.3)';
                 }
 
                 b.onclick = function() { loadMateriLama(m); };
                 box.appendChild(b);
             }
             if (!adaData) {
-                box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
+                box.innerHTML = "<span style='color:var(--gray); font-size:12px;'>Belum ada data materi.</span>";
             }
         } else {
-            box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
+            box.innerHTML = "<span style='color:var(--gray); font-size:12px;'>Belum ada data materi.</span>";
         }
     }
 
