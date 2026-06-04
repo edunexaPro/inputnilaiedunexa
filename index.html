@@ -240,29 +240,29 @@
         if (!materi) return alert("Tuliskan atau pilih materinya terlebih dahulu!");
         if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data nilai materi ini tidak ditemukan!");
 
-        // Konversi format tanggal input YYYY-MM-DD ke DD/MM/YYYY
+        // Konversi YYYY-MM-DD ke format DD/MM/YYYY
         let tglFormatExcel = "";
         if (tglInput) {
             const part = tglInput.split('-');
             if (part.length === 3) tglFormatExcel = `${part[2]}/${part[1]}/${part[0]}`;
         }
 
-        // PERBAIKAN: Format khusus HANYA 1 MATERI PILIHAN yang diekspor
+        // PERBAIKAN FATAL: Membaca array per siswa dengan benar berdasarkan materi pilihan
         let nilaiMateri = dbNilai[mapel][materi];
-        let csv = "\uFEFF"; // Tambahan BOM UTF-8 agar Excel langsung membaca karakter dengan benar
+        let csv = "\uFEFF"; // BOM UTF-8 agar karakter Excel tidak berantakan
         
-        // Baris 1: Informasi Judul Materi
+        // Baris 1: Judul Materi pilihan
         csv += `Nama;"${materi.replace(/"/g, '""')}"\n`;
-        // Baris 2: Informasi Tanggal Pelaksanaan berformat DD/MM/YYYY
+        // Baris 2: Tanggal pelaksanaan (DD/MM/YYYY)
         csv += `Tanggal;"${tglFormatExcel}"\n`;
         
-        // Baris berikutnya: Daftar nama siswa beserta nilainya saja
+        // Baris 3 dst: Mengisi Nama Siswa dan Nilai Spesifik materi pilihan tersebut
         daftarSiswa.forEach((nama, idx) => {
-            let nilaiSiswa = nilaiMateri[idx] !== undefined ? nilaiMateri[idx] : "0";
+            let nilaiSiswa = (nilaiMateri && nilaiMateri[idx] !== undefined) ? nilaiMateri[idx] : "0";
             csv += `"${nama.replace(/"/g, '""')}";${nilaiSiswa}\n`;
         });
 
-        // Nama file menyertakan nama materi dan tanggal berformat DD-MM-YYYY
+        // Judul Berkas CSV
         const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
         const namaFile = `Edunexa_${mapel}_${materi.replace(/[^a-zA-Z0-9]/g, '_')}${tglFormatFile}.csv`;
         
