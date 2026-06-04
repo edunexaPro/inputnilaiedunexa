@@ -9,7 +9,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Edunexa Pro">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5402/5402377.png">
-<link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Edunexa%20Pro%22,%22short_name%22:%22Edunexa%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f0f2f5%22,%22theme_color%22:%22%231a73e8%22,%22icons%22:[{%22src%22:%22EDUNEXA.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Edunexa%20Pro%22,%22short_name%22:%22Edunexa%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23f0f2f5%22,%22theme_color%22:%22%231a73e8%22,%22icons%22:[{%22src%22:%22EDUNEXA.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
 
     <style>
         :root { --primary: #25d366; --brand: #1a73e8; --bg: #f0f2f5; --danger: #dc3545; --gray: #6c757d; }
@@ -25,8 +25,12 @@
         label { font-size: 11px; font-weight: bold; color: #888; margin-left: 5px; }
         select, input, textarea { width: 100%; padding: 12px; margin: 6px 0 12px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; }
         
+        /* Gaya input khusus tanggal agar rapi di HP */
+        input[type="date"] { font-family: inherit; color: #333; }
+
         .history-box { background: #f8fafc; padding: 12px; border-radius: 10px; border: 1px dashed #cbd5e1; min-height: 40px; display: flex; flex-wrap: wrap; gap: 6px; }
-        .badge { background: #e2e8f0; color: #475569; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid #cbd5e1; }
+        .badge { background: #e2e8f0; color: #475569; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; border: 1px solid #cbd5e1; cursor: pointer; }
+        .badge:hover { background: #cbd5e1; }
 
         .siswa-info-flex { display: flex; justify-content: space-between; align-items: center; }
         .jml-badge { background: var(--brand); color: white; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
@@ -65,19 +69,22 @@
     <div class="card">
         <h3>2. Kontrol Mapel</h3>
         <label>Pilih Mata Pelajaran:</label>
-        <select id="mapel" onchange="refreshRiwayat()">
+        <select id="mapel" onchange="gantiMapel()">
             <option>Matematika</option><option>B Indonesia</option><option>IPAS</option>
             <option>Pend Pancasila</option><option>B Inggris</option><option>Agama</option>
             <option>Seni Budaya</option><option>PJOK</option><option>Koding</option><option>B Jawa</option>
         </select>
-        <label>Materi Terinput di Mapel Ini:</label>
+        <label>Materi Terinput (Ketuk badge untuk memuat ulang data):</label>
         <div id="riwayatMateri" class="history-box"></div>
     </div>
 
     <div class="card">
         <h3>3. Input Nilai Baru</h3>
+        <label>Tanggal Pelaksanaan (Ulangan / Tugas):</label>
+        <input type="date" id="tanggal">
+
         <label>Nama Materi (UH / Tugas / Latihan):</label>
-        <input type="text" id="materi" placeholder="Misal: Perkalian, Tugas 1, dll">
+        <input type="text" id="materi" placeholder="Misal: Perkalian, Tugas 1, dll" oninput="cekOtomatisNilai()">
         <div id="listSiswaContainer"></div>
     </div>
 
@@ -101,6 +108,17 @@
 <script>
     let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
     let daftarSiswa = JSON.parse(localStorage.getItem('db_siswa_v8')) || [];
+
+    // Mengatur default tanggal ke hari ini secara otomatis
+    function setTanggalHariIni() {
+        const hariIni = new Date();
+        const yyyy = hariIni.getFullYear();
+        let mm = hariIni.getMonth() + 1; 
+        let dd = hariIni.getDate();
+        if (dd < 10) dd = '0' + dd;
+        if (mm < 10) mm = '0' + mm;
+        document.getElementById('tanggal').value = yyyy + '-' + mm + '-' + dd;
+    }
 
     function toggleSetup() {
         const inputArea = document.getElementById('inputArea');
@@ -147,6 +165,14 @@
         }
     }
 
+    function gantiMapel() {
+        document.getElementById('materi').value = "";
+        setTanggalHariIni();
+        const inputs = document.querySelectorAll('.nilai-input');
+        inputs.forEach(inp => inp.value = "");
+        refreshRiwayat();
+    }
+
     function refreshRiwayat() {
         const mapel = document.getElementById('mapel').value;
         const box = document.getElementById('riwayatMateri');
@@ -154,17 +180,52 @@
         if (dbNilai[mapel] && Object.keys(dbNilai[mapel]).length > 0) {
             Object.keys(dbNilai[mapel]).forEach(m => {
                 const b = document.createElement('span');
-                b.className = 'badge'; b.innerText = m; box.appendChild(b);
+                b.className = 'badge'; b.innerText = m; 
+                b.onclick = function() { loadMateriLama(m); };
+                box.appendChild(b);
             });
         } else {
             box.innerHTML = "<span style='color:#ccc; font-size:11px;'>Belum ada data materi.</span>";
         }
     }
 
+    function loadMateriLama(namaMateri) {
+        document.getElementById('materi').value = namaMateri;
+        cekOtomatisNilai();
+    }
+
+    function cekOtomatisNilai() {
+        const mapel = document.getElementById('mapel').value;
+        const materi = document.getElementById('materi').value.trim();
+        const inputs = document.querySelectorAll('.nilai-input');
+
+        if (dbNilai[mapel] && dbNilai[mapel][materi]) {
+            let dataLama = dbNilai[mapel][materi];
+            
+            // Cek apakah dataLama menggunakan format baru (object dengan nilai & tanggal) atau array lama
+            let nilaiLama = Array.isArray(dataLama) ? dataLama : dataLama.nilai;
+            let tanggalLama = Array.isArray(dataLama) ? "" : dataLama.tanggal;
+
+            if(tanggalLama) {
+                document.getElementById('tanggal').value = tanggalLama;
+            }
+
+            inputs.forEach((inp, idx) => {
+                inp.value = nilaiLama[idx] !== undefined ? nilaiLama[idx] : "";
+            });
+        } else {
+            inputs.forEach(inp => inp.value = "");
+            setTanggalHariIni();
+        }
+    }
+
     function simpanKeHP() {
         const mapel = document.getElementById('mapel').value;
         const materi = document.getElementById('materi').value.trim();
+        const tanggal = document.getElementById('tanggal').value;
+        
         if (!materi) return alert("Tuliskan nama Materinya dulu!");
+        if (!tanggal) return alert("Pilih tanggal pelaksanaan dulu!");
 
         if (dbNilai[mapel] && dbNilai[mapel][materi]) {
             if (!confirm("Materi '" + materi + "' sudah ada. Perbarui data?")) return;
@@ -174,13 +235,19 @@
         let nilai = Array.from(inputs).map(inp => inp.value || "0");
 
         if (!dbNilai[mapel]) dbNilai[mapel] = {};
-        dbNilai[mapel][materi] = nilai;
+        
+        // Menyimpan paket data: nilai dan tanggal pelaksanaan
+        dbNilai[mapel][materi] = {
+            nilai: nilai,
+            tanggal: tanggal
+        };
 
         localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
         alert("✅ Berhasil disimpan!");
         
         document.getElementById('materi').value = ""; 
         inputs.forEach(inp => inp.value = "");
+        setTanggalHariIni();
         refreshRiwayat();
         window.scrollTo(0,0);
     }
@@ -195,30 +262,46 @@
 
     async function bagikanCSV() {
         const mapel = document.getElementById('mapel').value;
-        if (!dbNilai[mapel] || Object.keys(dbNilai[mapel]).length === 0) return alert("Data kosong!");
+        const materi = document.getElementById('materi').value.trim();
+        const tanggal = document.getElementById('tanggal').value;
+        
+        if (!materi) return alert("Silakan tentukan atau ketuk materi yang ingin diekspor!");
+        if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data nilai untuk materi ini tidak ditemukan!");
 
-        let materis = Object.keys(dbNilai[mapel]);
-        let csv = "Nama;" + materis.join(";") + "\n";
+        let dataMateri = dbNilai[mapel][materi];
+        let nilaiMateri = Array.isArray(dataMateri) ? dataMateri : dataMateri.nilai;
+        let tglMateri = tanggal || (Array.isArray(dataMateri) ? "" : dataMateri.tanggal);
+        
+        let csv = "\uFEFF"; // BOM UTF-8
+        
+        // Baris 1: Informasi Judul/Materi
+        // Baris 2: Informasi Tanggal (Sangat berguna untuk dokumentasi atau dicrawling makro Excel)
+        csv += `Nama;"${materi.replace(/"/g, '""')}"\n`;
+        csv += `Tanggal;"${tglMateri}"\n`;
         
         daftarSiswa.forEach((nama, idx) => {
-            let row = nama;
-            materis.forEach(m => { row += ";" + (dbNilai[mapel][m][idx] || "0"); });
-            csv += row + "\n";
+            let nilaiSiswa = nilaiMateri[idx] || "0";
+            csv += `"${nama.replace(/"/g, '""')}";${nilaiSiswa}\n`;
         });
 
-        const file = new File([csv], `Rekap_${mapel}.csv`, { type: 'text/csv' });
+        // Menyisipkan tanggal ke judul file agar unik dan informatif
+        const tglFormat = tglMateri ? "_" + tglMateri : "";
+        const namaFile = `Edunexa_${mapel}_${materi.replace(/[^a-zA-Z0-9]/g, '_')}${tglFormat}.csv`;
+        const file = new File([csv], namaFile, { type: 'text/csv;charset=utf-8;' });
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: 'Data Nilai' }).catch(() => {});
+            await navigator.share({ files: [file], title: 'Injeksi Nilai Edunexa' }).catch(() => {});
         } else {
             const a = document.createElement('a');
             a.href = URL.createObjectURL(file);
-            a.download = `Rekap_${mapel}.csv`;
+            a.download = namaFile;
             a.click();
         }
     }
 
+    // Inisialisasi awal
     renderSiswa();
+    setTanggalHariIni();
 </script>
 </body>
 </html>
