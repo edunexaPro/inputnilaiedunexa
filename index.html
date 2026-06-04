@@ -180,7 +180,6 @@
                 const b = document.createElement('span');
                 b.className = 'badge'; 
                 b.innerText = m; 
-                // Mengembalikan fungsi klik badge asli Anda agar nama materi masuk ke kolom input
                 b.onclick = function() { loadMateriLama(m); };
                 box.appendChild(b);
             });
@@ -189,7 +188,6 @@
         }
     }
 
-    // Mengembalikan fungsi load data lama bawaan Anda agar nilai lama tampil di input kotak
     function loadMateriLama(namaMateri) {
         document.getElementById('materi').value = namaMateri;
         const mapel = document.getElementById('mapel').value;
@@ -240,30 +238,38 @@
         const tglInput = document.getElementById('tanggal').value;
 
         if (!materi) return alert("Tuliskan atau pilih materinya terlebih dahulu!");
-        if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data kosong!");
+        if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data nilai materi ini tidak ditemukan!");
 
+        // Konversi format tanggal input YYYY-MM-DD ke DD/MM/YYYY
         let tglFormatExcel = "";
         if (tglInput) {
             const part = tglInput.split('-');
             if (part.length === 3) tglFormatExcel = `${part[2]}/${part[1]}/${part[0]}`;
         }
 
-        let materis = Object.keys(dbNilai[mapel]);
-        let csv = "Nama;" + materis.join(";") + "\n";
+        // PERBAIKAN: Format khusus HANYA 1 MATERI PILIHAN yang diekspor
+        let nilaiMateri = dbNilai[mapel][materi];
+        let csv = "\uFEFF"; // Tambahan BOM UTF-8 agar Excel langsung membaca karakter dengan benar
         
+        // Baris 1: Informasi Judul Materi
+        csv += `Nama;"${materi.replace(/"/g, '""')}"\n`;
+        // Baris 2: Informasi Tanggal Pelaksanaan berformat DD/MM/YYYY
+        csv += `Tanggal;"${tglFormatExcel}"\n`;
+        
+        // Baris berikutnya: Daftar nama siswa beserta nilainya saja
         daftarSiswa.forEach((nama, idx) => {
-            let row = nama;
-            materis.forEach(m => { row += ";" + (dbNilai[mapel][m][idx] || "0"); });
-            csv += row + "\n";
+            let nilaiSiswa = nilaiMateri[idx] !== undefined ? nilaiMateri[idx] : "0";
+            csv += `"${nama.replace(/"/g, '""')}";${nilaiSiswa}\n`;
         });
 
+        // Nama file menyertakan nama materi dan tanggal berformat DD-MM-YYYY
         const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
-        const namaFile = `Rekap_${mapel}${tglFormatFile}.csv`;
+        const namaFile = `Edunexa_${mapel}_${materi.replace(/[^a-zA-Z0-9]/g, '_')}${tglFormatFile}.csv`;
         
-        const file = new File([csv], namaFile, { type: 'text/csv' });
+        const file = new File([csv], namaFile, { type: 'text/csv;charset=utf-8;' });
 
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: 'Data Nilai' }).catch(() => {});
+            await navigator.share({ files: [file], title: 'Injeksi Nilai Edunexa' }).catch(() => {});
         } else {
             const a = document.createElement('a');
             a.href = URL.createObjectURL(file);
