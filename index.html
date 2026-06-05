@@ -11,77 +11,25 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-        
-        :root { 
-            --primary: #4f46e5; 
-            --brand: #1e293b; 
-            --bg-gradient: #f1f5f9; 
-            --danger: #ef4444; 
-        }
+        :root { --primary: #4f46e5; --brand: #1e293b; --bg-gradient: #f1f5f9; --danger: #ef4444; }
 
         * { box-sizing: border-box; }
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg-gradient); 
-            margin: 0; 
-            padding: 15px; 
-            padding-bottom: 110px; 
-            color: #334155; 
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-gradient); margin: 0; padding: 15px; padding-bottom: 110px; color: #334155; }
         
         /* --- GERBANG AKTIVASI --- */
-        #activationGate { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #f1f5f9; z-index: 9999; display: flex; 
-            align-items: center; justify-content: center; padding: 15px; 
-        }
-        .gate-box { 
-            background: white; padding: 25px; border-radius: 20px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; 
-            max-width: 400px; text-align: center; 
-        }
-        .id-box { 
-            background: #e0e7ff; padding: 15px; border-radius: 10px; 
-            font-weight: 800; font-family: monospace; font-size: 16px; 
-            margin: 15px 0; color: var(--primary); word-break: break-all; 
-        }
+        #activationGate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f1f5f9; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 15px; }
+        .gate-box { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .id-box { background: #e0e7ff; padding: 15px; border-radius: 10px; font-weight: 800; font-family: monospace; font-size: 16px; margin: 15px 0; color: var(--primary); word-break: break-all; }
         
-        /* --- APLIKASI UTAMA --- */
-        .card { 
-            background: rgba(255, 255, 255, 0.8); padding: 20px; 
-            border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.5); 
-            margin-bottom: 15px; 
-        }
-        h1, h3 { color: var(--brand); font-weight: 800; }
-        
-        input, select, textarea { 
-            width: 100%; padding: 14px; border: 1px solid #cbd5e1; 
-            border-radius: 12px; margin-bottom: 10px; 
-        }
-        
-        button { 
-            border: none; font-weight: 800; cursor: pointer; 
-            padding: 16px; border-radius: 14px; width: 100%; margin-top: 5px; 
-        }
-        
+        /* APLIKASI */
+        .card { background: rgba(255, 255, 255, 0.8); padding: 20px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.5); margin-bottom: 15px; }
+        button { border: none; font-weight: 800; cursor: pointer; padding: 16px; border-radius: 14px; width: 100%; margin-top: 5px; }
         .btn-main { background: var(--primary); color: white; }
         .btn-outline { background: white; border: 1px solid #cbd5e1; color: var(--brand); }
-        
-        .footer { 
-            position: fixed; bottom: 0; left: 0; right: 0; 
-            background: rgba(255, 255, 255, 0.95); padding: 15px; 
-            display: flex; gap: 10px; border-top: 1px solid #e2e8f0; 
-        }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); padding: 15px; display: flex; gap: 10px; border-top: 1px solid #e2e8f0; }
         .footer button { flex: 1; margin: 0; }
-        
-        .siswa-row { 
-            display: flex; align-items: center; justify-content: space-between; 
-            padding: 10px 0; border-bottom: 1px solid #e2e8f0; 
-        }
-        .nilai-input { 
-            width: 70px; text-align: center; font-weight: 800; 
-            border: 1px solid #cbd5e1; border-radius: 8px; height: 40px; 
-        }
+        .siswa-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e2e8f0; }
+        .nilai-input { width: 70px; text-align: center; font-weight: 800; border: 1px solid #cbd5e1; border-radius: 8px; height: 40px; }
     </style>
 </head>
 <body>
@@ -89,18 +37,19 @@
     <div id="activationGate">
         <div class="gate-box">
             <h2>Aktivasi Edunexa</h2>
-            <p style="font-size: 13px;">Berikan ID ini ke Admin untuk mendapatkan kode:</p>
+            <p style="font-size: 13px;">Berikan ID ini ke Admin:</p>
             <div class="id-box" id="myDeviceId">---</div>
+            
             <input type="text" id="activationCode" style="text-align:center; padding:12px; margin-bottom:10px; width:100%; border:1px solid #ccc; border-radius:8px;" placeholder="Masukkan Kode Aktivasi">
             <button class="btn-main" onclick="checkActivation()">AKTIFKAN</button>
+            
+            <!-- Tombol Share Native -->
+            <button class="btn-outline" style="border:1px solid var(--primary); color:var(--primary); margin-top:10px;" onclick="shareIdNative()">BAGIKAN ID KE WA</button>
         </div>
     </div>
 
     <div id="inputArea" style="display:none;">
-        <div style="text-align:center; padding: 20px 0;">
-            <h1>INPUT NILAI EDUNEXA</h1>
-        </div>
-
+        <div style="text-align:center; padding: 20px 0;"><h1>INPUT NILAI EDUNEXA</h1></div>
         <div class="card">
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h3>Data Siswa</h3>
@@ -108,7 +57,6 @@
             </div>
             <button class="btn-outline" style="margin-top:15px;" onclick="toggleSetup()">EDIT DAFTAR NAMA</button>
         </div>
-
         <div class="card">
             <h3>Kontrol Mapel</h3>
             <select id="mapel" onchange="gantiMapel()">
@@ -118,7 +66,6 @@
             </select>
             <div id="riwayatMateri" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
         </div>
-
         <div class="card">
             <h3>Input Nilai Baru</h3>
             <button class="btn-outline" style="margin-bottom:15px; color:var(--primary)" onclick="kosongkanForm()">+ INPUT MATERI BARU</button>
@@ -126,7 +73,6 @@
             <input type="text" id="materi" placeholder="Nama Materi" oninput="refreshRiwayat()">
             <div id="listSiswaContainer"></div>
         </div>
-
         <div class="footer">
             <button class="btn-outline" onclick="simpanKeHP()">SIMPAN</button>
             <button class="btn-main" onclick="bagikanCSV()">EKSPOR CSV</button>
@@ -143,31 +89,9 @@
     </div>
 
     <script>
-        // --- KONFIGURASI AKTIVASI ---
         const SALT = 1205; 
         const PREFIX = "EDU";
         const SUFFIX = "FTY";
-
-        // Fungsi untuk generate kunci sesuai rumus Excel Bapak
-        function generateKey(id) {
-            let cleanId = id.replace(/\s/g, '').toUpperCase();
-            let totalASCII = 0;
-            for (let i = 0; i < cleanId.length; i++) {
-                totalASCII += cleanId.charCodeAt(i);
-            }
-            return PREFIX + (totalASCII * SALT) + SUFFIX;
-        }
-
-        function checkActivation() {
-            const input = document.getElementById('activationCode').value.trim().toUpperCase();
-            const correct = generateKey(getDeviceId());
-            if (input === correct) {
-                localStorage.setItem('edx_activated', 'true');
-                location.reload();
-            } else {
-                alert("Kode salah!");
-            }
-        }
 
         function getDeviceId() {
             let id = localStorage.getItem('edx_device_id');
@@ -178,9 +102,34 @@
             return id;
         }
 
-        // --- APLIKASI UTAMA ---
-        let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
-        let daftarSiswa = JSON.parse(localStorage.getItem('db_siswa_v8')) || [];
+        // Fitur Native Share
+        function shareIdNative() {
+            const id = getDeviceId();
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Aktivasi Edunexa',
+                    text: 'Halo Admin, saya ingin aktivasi Edunexa Pro. ID Perangkat saya: ' + id,
+                }).catch(() => {});
+            } else {
+                alert("ID Perangkat Anda: " + id + ". Silakan salin secara manual.");
+            }
+        }
+
+        function generateKey(id) {
+            let cleanId = id.replace(/\s/g, '').toUpperCase();
+            let totalASCII = 0;
+            for (let i = 0; i < cleanId.length; i++) totalASCII += cleanId.charCodeAt(i);
+            return PREFIX + (totalASCII * SALT) + SUFFIX;
+        }
+
+        function checkActivation() {
+            const input = document.getElementById('activationCode').value.trim().toUpperCase();
+            const correct = generateKey(getDeviceId());
+            if (input === correct) {
+                localStorage.setItem('edx_activated', 'true');
+                location.reload();
+            } else { alert("Kode salah!"); }
+        }
 
         window.onload = function() {
             if (localStorage.getItem('edx_activated') === 'true') {
@@ -192,23 +141,14 @@
             }
         };
 
+        // --- SISANYA FUNGSI APLIKASI (Sama seperti sebelumnya) ---
         function initApp() { renderSiswa(); setTanggalHariIni(); }
-        
-        function setTanggalHariIni() { 
-            document.getElementById('tanggal').value = new Date().toISOString().split('T')[0]; 
-        }
-
-        function toggleSetup() { 
-            document.getElementById('inputArea').style.display = document.getElementById('inputArea').style.display === 'none' ? 'block' : 'none'; 
-            document.getElementById('setupArea').style.display = document.getElementById('setupArea').style.display === 'none' ? 'block' : 'none'; 
-        }
-
+        function setTanggalHariIni() { document.getElementById('tanggal').value = new Date().toISOString().split('T')[0]; }
+        function toggleSetup() { document.getElementById('inputArea').style.display = document.getElementById('inputArea').style.display === 'none' ? 'block' : 'none'; document.getElementById('setupArea').style.display = document.getElementById('setupArea').style.display === 'none' ? 'block' : 'none'; }
         function simpanSiswa() { 
             daftarSiswa = document.getElementById('rawSiswa').value.split('\n').map(s => s.trim()).filter(s => s !== ""); 
-            localStorage.setItem('db_siswa_v8', JSON.stringify(daftarSiswa)); 
-            renderSiswa(); toggleSetup(); 
+            localStorage.setItem('db_siswa_v8', JSON.stringify(daftarSiswa)); renderSiswa(); toggleSetup(); 
         }
-
         function renderSiswa() {
             const container = document.getElementById('listSiswaContainer');
             container.innerHTML = "";
@@ -222,24 +162,21 @@
             document.getElementById('rawSiswa').value = daftarSiswa.join('\n');
             refreshRiwayat();
         }
-
         function simpanKeHP() {
             const mapel = document.getElementById('mapel').value;
             const materi = document.getElementById('materi').value.trim();
-            if (!materi) return alert("Tuliskan nama Materinya!");
-            
-            const inputs = document.querySelectorAll('.nilai-input');
-            let nilai = Array.from(inputs).map(inp => inp.value || "0");
-            
+            if (!materi) return alert("Tuliskan materi!");
+            let nilai = Array.from(document.querySelectorAll('.nilai-input')).map(inp => inp.value || "0");
+            let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
             if (!dbNilai[mapel]) dbNilai[mapel] = {};
             dbNilai[mapel][materi] = nilai;
             localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
             alert("✅ Disimpan!");
             refreshRiwayat();
         }
-
         function refreshRiwayat() {
             const mapel = document.getElementById('mapel').value;
+            let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
             const box = document.getElementById('riwayatMateri');
             box.innerHTML = "";
             if (dbNilai[mapel]) {
@@ -252,50 +189,30 @@
                 }
             }
         }
-
         function hapusMateri(e, namaMateri) {
             e.stopPropagation();
-            const mapel = document.getElementById('mapel').value;
-            delete dbNilai[mapel][namaMateri];
+            let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
+            delete dbNilai[document.getElementById('mapel').value][namaMateri];
             localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
             refreshRiwayat();
         }
-
         function loadMateriLama(namaMateri) {
             document.getElementById('materi').value = namaMateri;
-            const mapel = document.getElementById('mapel').value;
-            const inputs = document.querySelectorAll('.nilai-input');
-            if (dbNilai[mapel][namaMateri]) {
-                inputs.forEach((inp, idx) => inp.value = dbNilai[mapel][namaMateri][idx] || "");
-            }
+            let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
+            let data = dbNilai[document.getElementById('mapel').value][namaMateri];
+            document.querySelectorAll('.nilai-input').forEach((inp, idx) => inp.value = data[idx] || "");
         }
-
-        function kosongkanForm() { 
-            document.getElementById('materi').value = ""; 
-            document.querySelectorAll('.nilai-input').forEach(inp => inp.value = ""); 
-            setTanggalHariIni(); 
-        }
-
+        function kosongkanForm() { document.getElementById('materi').value = ""; document.querySelectorAll('.nilai-input').forEach(inp => inp.value = ""); }
         function gantiMapel() { kosongkanForm(); refreshRiwayat(); }
-
         async function bagikanCSV() {
             const mapel = document.getElementById('mapel').value;
             const materi = document.getElementById('materi').value.trim();
             if (!materi) return alert("Isi nama materi!");
-            
             let csv = "Nama;" + materi + "\n";
-            daftarSiswa.forEach((nama, idx) => { 
-                csv += nama + ";" + (document.querySelectorAll('.nilai-input')[idx].value || "0") + "\n"; 
-            });
-            
+            daftarSiswa.forEach((nama, idx) => { csv += nama + ";" + (document.querySelectorAll('.nilai-input')[idx].value || "0") + "\n"; });
             const file = new File([csv], `Nilai_${mapel}_${materi}.csv`, { type: 'text/csv' });
             if (navigator.canShare) await navigator.share({ files: [file] });
-            else { 
-                const a = document.createElement('a'); 
-                a.href = URL.createObjectURL(file); 
-                a.download = file.name; 
-                a.click(); 
-            }
+            else { const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; a.click(); }
         }
     </script>
 </body>
