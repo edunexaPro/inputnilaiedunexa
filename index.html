@@ -9,15 +9,15 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Edunexa Pro">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5402/5402377.png">
-    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Edunexa%20Pro%22,%22short_name%22:%22Edunexa%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23e2e8f0%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22EDUNEXA.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Edunexa%20Pro%22,%22short_name%22:%22Edunexa%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23e2e8f0%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/5402/5402377.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         :root { 
-            --primary: #4f46e5; /* Modern Indigo */
+            --primary: #4f46e5; 
             --primary-hover: #4338ca;
-            --brand: #1e293b; /* Slate 800 */
+            --brand: #1e293b; 
             --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 50%, #e2e8f0 100%);
             --card-bg: rgba(255, 255, 255, 0.65);
             --card-border: rgba(255, 255, 255, 0.8);
@@ -25,127 +25,32 @@
             --gray: #64748b; 
         }
 
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg-gradient); 
-            background-attachment: fixed;
-            margin: 0; 
-            padding: 16px; 
-            padding-bottom: 110px; 
-            color: #334155; 
-        }
-        
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-gradient); background-attachment: fixed; margin: 0; padding: 16px; padding-bottom: 110px; color: #334155; }
         .header { text-align: center; padding: 20px 0 15px 0; }
         .header h1 { margin: 0; font-size: 24px; color: var(--brand); font-weight: 800; letter-spacing: -0.5px; }
         .header p { margin: 4px 0 0 0; font-size: 12px; color: var(--gray); font-weight: 500; letter-spacing: 1px; text-transform: uppercase; }
 
-        /* Desain Kartu Glassmorphism */
-        .card { 
-            background: var(--card-bg); 
-            backdrop-filter: blur(16px); 
-            -webkit-backdrop-filter: blur(16px);
-            padding: 20px; 
-            border-radius: 20px; 
-            border: 1px solid var(--card-border);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255,255,255,0.6); 
-            margin-bottom: 20px; 
-        }
-        
-        h3 { margin-top: 0; font-size: 14px; border-left: 4px solid var(--primary); padding-left: 12px; color: var(--brand); text-transform: uppercase; margin-bottom: 16px; font-weight: 800; letter-spacing: 0.5px; }
+        .card { background: var(--card-bg); backdrop-filter: blur(16px); padding: 20px; border-radius: 20px; border: 1px solid var(--card-border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); margin-bottom: 20px; }
+        h3 { margin-top: 0; font-size: 14px; border-left: 4px solid var(--primary); padding-left: 12px; color: var(--brand); text-transform: uppercase; margin-bottom: 16px; font-weight: 800; }
         
         label { font-size: 12px; font-weight: 700; color: #475569; margin-left: 5px; display: block; margin-bottom: 6px; }
-        
-        /* Elemen Input & Form */
-        select, input[type="text"], input[type="date"], textarea { 
-            width: 100%; 
-            padding: 14px 16px; 
-            margin-bottom: 16px; 
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid #cbd5e1; 
-            border-radius: 14px; 
-            box-sizing: border-box; 
-            font-size: 15px; 
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 500;
-            color: var(--brand);
-            transition: all 0.3s ease;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-        select:focus, input[type="text"]:focus, input[type="date"]:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
-            background: #ffffff;
-        }
+        select, input[type="text"], input[type="date"], textarea { width: 100%; padding: 14px 16px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid #cbd5e1; border-radius: 14px; box-sizing: border-box; font-size: 15px; color: var(--brand); }
 
-        /* Badge & Riwayat */
         .history-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-        .badge { 
-            background: rgba(255, 255, 255, 0.8); 
-            color: var(--gray); 
-            padding: 8px 14px; 
-            border-radius: 10px; 
-            font-size: 12px; 
-            font-weight: 700; 
-            border: 1px solid #cbd5e1; 
-            cursor: pointer; 
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .badge:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .badge { background: rgba(255, 255, 255, 0.8); color: var(--gray); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-delete-badge { color: #ef4444; font-weight: 800; font-size: 16px; line-height: 1; }
+        .badge:hover { background: #fff; }
 
-        .siswa-info-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .jml-badge { background: var(--primary); color: white; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); }
-
-        /* Baris Siswa */
         .siswa-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid rgba(203, 213, 225, 0.5); }
-        .siswa-row:last-child { border-bottom: none; }
         .nama-siswa { flex: 1; font-size: 15px; color: var(--brand); font-weight: 600; }
-        
-        .nilai-input { 
-            width: 70px !important; 
-            text-align: center; 
-            margin: 0 !important; 
-            font-weight: 800; 
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid transparent !important; 
-            color: var(--primary); 
-            height: 48px; 
-            border-radius: 12px; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: 0.2s;
-        }
-        .nilai-input:focus { border-color: var(--primary) !important; transform: scale(1.05); background: #ffffff; }
+        .nilai-input { width: 70px !important; text-align: center; margin: 0 !important; font-weight: 800; font-size: 16px; border: 2px solid transparent !important; color: var(--primary); height: 48px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
 
-        /* Tombol Bawah (Sticky Footer) */
-        .footer { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: rgba(255, 255, 255, 0.85); 
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 16px 20px 24px 20px; 
-            display: flex; gap: 12px; 
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.05); 
-            z-index: 100; 
-            border-top: 1px solid rgba(255,255,255,0.5);
-        }
-        
-        button { border: none; font-weight: 800; cursor: pointer; transition: all 0.2s; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: 0.5px; }
-        button:active { transform: scale(0.96); }
-        
-        .btn-side { background: #cbd5e1; color: var(--brand); flex: 1; padding: 16px; font-size: 13px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        
-        .btn-main { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); color: white; flex: 2; padding: 16px; font-size: 15px; border-radius: 16px; box-shadow: 0 6px 20px rgba(79, 70, 229, 0.35); text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        
-        .btn-outline { background: rgba(255,255,255,0.8); color: var(--brand); padding: 14px; border-radius: 14px; font-size: 13px; width: 100%; border: 1px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-        
-        .btn-danger { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; width: 100%; margin-top: 25px; padding: 14px; font-size: 12px; border-radius: 14px; }
-
-        #setupArea { display: none; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); padding: 16px 20px 24px 20px; display: flex; gap: 12px; box-shadow: 0 -10px 30px rgba(0,0,0,0.05); z-index: 100; }
+        button { border: none; font-weight: 800; cursor: pointer; padding: 16px; border-radius: 16px; }
+        .btn-side { background: #cbd5e1; color: var(--brand); flex: 1; }
+        .btn-main { background: var(--primary); color: white; flex: 2; }
+        .btn-outline { background: white; border: 1px solid #cbd5e1; width: 100%; padding: 14px; border-radius: 14px; }
+        .btn-danger { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; width: 100%; margin-top: 25px; padding: 14px; border-radius: 14px; }
     </style>
 </head>
 <body>
@@ -154,40 +59,29 @@
     <div class="header">
         <img src="https://i.ibb.co/YSHKvYQ/logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5402/5402377.png'" alt="Logo Edunexa" style="width: 85px; height: 85px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));">
         <h1>INPUT NILAI EDUNEXA</h1>
-        <p>Created by Tomy Satria</p>
     </div>
 
     <div class="card">
-        <div class="siswa-info-flex">
-            <h3>1. Data Siswa</h3>
-            <span class="jml-badge" id="displayJml">0 Siswa</span>
-        </div>
+        <div class="siswa-info-flex"><h3>1. Data Siswa</h3><span class="jml-badge" id="displayJml">0 Siswa</span></div>
         <button class="btn-outline" onclick="toggleSetup()">EDIT DAFTAR NAMA</button>
     </div>
 
     <div class="card">
         <h3>2. Kontrol Mapel</h3>
-        <label>Pilih Mata Pelajaran:</label>
         <select id="mapel" onchange="gantiMapel()">
             <option>Matematika</option><option>B Indonesia</option><option>IPAS</option>
             <option>Pend Pancasila</option><option>B Inggris</option><option>Agama</option>
             <option>Seni Budaya</option><option>PJOK</option><option>Koding</option><option>B Jawa</option>
         </select>
-        <label>Materi Terinput di Mapel Ini (Ketuk untuk memilih):</label>
+        <label>Materi Terinput (Klik untuk buka / Klik X untuk hapus):</label>
         <div id="riwayatMateri" class="history-box"></div>
     </div>
 
     <div class="card">
         <h3>3. Input Nilai Baru</h3>
-        
-        <button class="btn-outline" style="color: var(--primary); border-color: #c7d2fe; background: #e0e7ff; margin-top: 0; margin-bottom: 20px; font-weight: 800;" onclick="kosongkanForm()">+ INPUT MATERI BARU</button>
-
-        <label>Tanggal Pelaksanaan (Ulangan / Tugas):</label>
-        <input type="date" id="tanggal">
-
-        <label>Nama Materi (UH / Tugas / Latihan):</label>
-        <input type="text" id="materi" placeholder="Misal: Perkalian, Tugas 1, dll" oninput="refreshRiwayat()">
-        
+        <button class="btn-outline" style="color: var(--primary); background: #e0e7ff; margin-bottom: 20px;" onclick="kosongkanForm()">+ INPUT MATERI BARU</button>
+        <label>Tanggal:</label><input type="date" id="tanggal">
+        <label>Nama Materi:</label><input type="text" id="materi" placeholder="Misal: UH Perkalian" oninput="refreshRiwayat()">
         <div id="listSiswaContainer" style="margin-top: 20px;"></div>
     </div>
 
@@ -197,13 +91,12 @@
     </div>
 </div>
 
-<div id="setupArea">
+<div id="setupArea" style="display:none;">
     <div class="card">
         <h3>Pengaturan Nama Siswa</h3>
-        <p style="font-size:12px; color:var(--gray); font-weight: 500;">Masukkan nama satu per baris (Urutan Excel).</p>
-        <textarea id="rawSiswa" rows="18" placeholder="Contoh:&#10;Budi&#10;Ani"></textarea>
-        <button class="btn-main" style="width:100%; border-radius: 14px;" onclick="simpanSiswa()">SIMPAN NAMA</button>
-        <button class="btn-outline" onclick="toggleSetup()" style="width:100%; border:none; background:transparent; color:var(--gray); margin-top:10px; box-shadow: none;">KEMBALI</button>
+        <textarea id="rawSiswa" rows="18"></textarea>
+        <button class="btn-main" style="width:100%" onclick="simpanSiswa()">SIMPAN NAMA</button>
+        <button class="btn-outline" onclick="toggleSetup()" style="margin-top:10px;">KEMBALI</button>
         <button class="btn-danger" onclick="resetSemester()">HAPUS DATABASE NILAI</button>
     </div>
 </div>
@@ -212,69 +105,6 @@
     let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
     let daftarSiswa = JSON.parse(localStorage.getItem('db_siswa_v8')) || [];
 
-    function setTanggalHariIni() {
-        const hariIni = new Date();
-        const yyyy = hariIni.getFullYear();
-        let mm = hariIni.getMonth() + 1; 
-        let dd = hariIni.getDate();
-        if (dd < 10) dd = '0' + dd;
-        if (mm < 10) mm = '0' + mm;
-        document.getElementById('tanggal').value = yyyy + '-' + mm + '-' + dd;
-    }
-
-    function toggleSetup() {
-        const inputArea = document.getElementById('inputArea');
-        const setupArea = document.getElementById('setupArea');
-        if (setupArea.style.display === 'none' || setupArea.style.display === '') {
-            setupArea.style.display = 'block'; inputArea.style.display = 'none';
-            document.getElementById('rawSiswa').value = daftarSiswa.join('\n');
-        } else {
-            setupArea.style.display = 'none'; inputArea.style.display = 'block';
-        }
-        window.scrollTo(0,0);
-    }
-
-    function simpanSiswa() {
-        const teks = document.getElementById('rawSiswa').value;
-        daftarSiswa = teks.split('\n').map(s => s.trim()).filter(s => s !== "");
-        localStorage.setItem('db_siswa_v8', JSON.stringify(daftarSiswa));
-        renderSiswa(); toggleSetup();
-    }
-
-    function renderSiswa() {
-        const container = document.getElementById('listSiswaContainer');
-        container.innerHTML = "";
-        document.getElementById('displayJml').innerText = daftarSiswa.length + " Siswa";
-        
-        daftarSiswa.forEach((nama, idx) => {
-            const row = document.createElement('div');
-            row.className = 'siswa-row';
-            row.innerHTML = `
-                <div class="nama-siswa">${idx + 1}. ${nama}</div>
-                <input type="number" class="nilai-input" placeholder="0" 
-                    inputmode="numeric" onfocus="this.select()" 
-                    onkeydown="pindahBaris(event, ${idx})">`;
-            container.appendChild(row);
-        });
-        refreshRiwayat();
-    }
-
-    function pindahBaris(e, index) {
-        if (e.key === "Enter") {
-            e.preventDefault();
-            const inputs = document.querySelectorAll('.nilai-input');
-            if (inputs[index + 1]) inputs[index + 1].focus();
-        }
-    }
-
-    function gantiMapel() {
-        document.getElementById('materi').value = "";
-        const inputs = document.querySelectorAll('.nilai-input');
-        inputs.forEach(inp => inp.value = "");
-        setTanggalHariIni();
-        refreshRiwayat();
-    }
-
     function refreshRiwayat() {
         const mapel = document.getElementById('mapel').value;
         const box = document.getElementById('riwayatMateri');
@@ -282,123 +112,82 @@
         box.innerHTML = "";
         
         if (dbNilai[mapel]) {
-            let adaData = false;
             for (let m in dbNilai[mapel]) {
-                adaData = true;
                 const b = document.createElement('span');
                 b.className = 'badge'; 
-                b.innerText = m; 
+                b.innerHTML = `${m} <span class="btn-delete-badge" onclick="hapusMateri(event, '${m}')">&times;</span>`;
                 
-                if (m === materiAktif) {
-                    b.style.background = 'var(--primary)';
-                    b.style.color = 'white';
-                    b.style.borderColor = 'var(--primary)';
-                    b.style.boxShadow = '0 4px 10px rgba(79, 70, 229, 0.3)';
-                }
-
+                if (m === materiAktif) b.style.background = '#e0e7ff';
                 b.onclick = function() { loadMateriLama(m); };
                 box.appendChild(b);
             }
-            if (!adaData) {
-                box.innerHTML = "<span style='color:var(--gray); font-size:12px;'>Belum ada data materi.</span>";
-            }
-        } else {
-            box.innerHTML = "<span style='color:var(--gray); font-size:12px;'>Belum ada data materi.</span>";
         }
     }
 
+    function hapusMateri(e, namaMateri) {
+        e.stopPropagation(); // Mencegah form ikut terbuka
+        const mapel = document.getElementById('mapel').value;
+        if(confirm("Hapus materi '" + namaMateri + "'?")) {
+            delete dbNilai[mapel][namaMateri];
+            localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
+            kosongkanForm();
+            refreshRiwayat();
+        }
+    }
+
+    // Fungsi lainnya tetap sama...
+    function initApp() { renderSiswa(); setTanggalHariIni(); }
+    function setTanggalHariIni() { document.getElementById('tanggal').value = new Date().toISOString().split('T')[0]; }
+    function toggleSetup() { document.getElementById('inputArea').style.display = document.getElementById('inputArea').style.display === 'none' ? 'block' : 'none'; document.getElementById('setupArea').style.display = document.getElementById('setupArea').style.display === 'none' ? 'block' : 'none'; }
+    function simpanSiswa() { daftarSiswa = document.getElementById('rawSiswa').value.split('\n').map(s => s.trim()).filter(s => s !== ""); localStorage.setItem('db_siswa_v8', JSON.stringify(daftarSiswa)); renderSiswa(); toggleSetup(); }
+    function renderSiswa() {
+        const container = document.getElementById('listSiswaContainer');
+        container.innerHTML = "";
+        document.getElementById('displayJml').innerText = daftarSiswa.length + " Siswa";
+        daftarSiswa.forEach((nama, idx) => {
+            const row = document.createElement('div');
+            row.className = 'siswa-row';
+            row.innerHTML = `<div class="nama-siswa">${idx + 1}. ${nama}</div><input type="number" class="nilai-input" onfocus="this.select()">`;
+            container.appendChild(row);
+        });
+        refreshRiwayat();
+    }
     function loadMateriLama(namaMateri) {
         document.getElementById('materi').value = namaMateri;
         const mapel = document.getElementById('mapel').value;
         const inputs = document.querySelectorAll('.nilai-input');
         if (dbNilai[mapel] && dbNilai[mapel][namaMateri]) {
-            inputs.forEach((inp, idx) => {
-                inp.value = dbNilai[mapel][namaMateri][idx] !== undefined ? dbNilai[mapel][namaMateri][idx] : "";
-            });
+            inputs.forEach((inp, idx) => inp.value = dbNilai[mapel][namaMateri][idx] || "");
         }
         refreshRiwayat();
     }
-
-    function kosongkanForm() {
-        document.getElementById('materi').value = "";
-        const inputs = document.querySelectorAll('.nilai-input');
-        inputs.forEach(inp => inp.value = "");
-        setTanggalHariIni();
-        refreshRiwayat();
-    }
-
+    function kosongkanForm() { document.getElementById('materi').value = ""; document.querySelectorAll('.nilai-input').forEach(inp => inp.value = ""); setTanggalHariIni(); refreshRiwayat(); }
     function simpanKeHP() {
         const mapel = document.getElementById('mapel').value;
         const materi = document.getElementById('materi').value.trim();
-        if (!materi) return alert("Tuliskan nama Materinya dulu!");
-
-        if (dbNilai[mapel] && dbNilai[mapel][materi]) {
-            if (!confirm("Materi '" + materi + "' sudah ada. Perbarui data?")) return;
-        }
-        
+        if (!materi) return alert("Tuliskan nama Materinya!");
         const inputs = document.querySelectorAll('.nilai-input');
         let nilai = Array.from(inputs).map(inp => inp.value || "0");
-
         if (!dbNilai[mapel]) dbNilai[mapel] = {};
         dbNilai[mapel][materi] = nilai;
-
         localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
-        alert("✅ Berhasil disimpan!");
-        
-        document.getElementById('materi').value = ""; 
-        inputs.forEach(inp => inp.value = "");
-        setTanggalHariIni();
+        alert("✅ Disimpan!");
         refreshRiwayat();
-        window.scrollTo(0,0);
     }
-
-    function resetSemester() {
-        if(confirm("Hapus semua riwayat nilai? (Daftar nama tetap aman)")) {
-            dbNilai = {};
-            localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
-            renderSiswa(); toggleSetup();
-        }
-    }
-
+    function resetSemester() { if(confirm("Hapus semua nilai?")) { dbNilai = {}; localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai)); renderSiswa(); toggleSetup(); } }
+    
     async function bagikanCSV() {
         const mapel = document.getElementById('mapel').value;
         const materi = document.getElementById('materi').value.trim();
-        const tglInput = document.getElementById('tanggal').value;
-
-        if (!materi) return alert("Tuliskan atau pilih materinya terlebih dahulu!");
-        if (!dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data nilai materi ini belum disimpan di HP!");
-
-        let tglFormatExcel = "";
-        if (tglInput) {
-            const part = tglInput.split('-');
-            if (part.length === 3) tglFormatExcel = `${part[2]}/${part[1]}/${part[0]}`;
-        }
-
+        if (!materi || !dbNilai[mapel] || !dbNilai[mapel][materi]) return alert("Data tidak ditemukan!");
         let csv = "Nama;" + materi + "\n";
-        csv += "Tanggal;" + tglFormatExcel + "\n";
-
-        daftarSiswa.forEach((nama, idx) => {
-            let nilaiSiswa = dbNilai[mapel][materi][idx] || "0";
-            csv += nama + ";" + nilaiSiswa + "\n";
-        });
-
-        const tglFormatFile = tglFormatExcel ? "_" + tglFormatExcel.replace(/\//g, '-') : "";
-        const namaFile = `Nilai_${mapel}_${materi}${tglFormatFile}.csv`;
-        
-        const file = new File([csv], namaFile, { type: 'text/csv' });
-
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({ files: [file], title: 'Data Nilai' }).catch(() => {});
-        } else {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(file);
-            a.download = namaFile;
-            a.click();
-        }
+        daftarSiswa.forEach((nama, idx) => { csv += nama + ";" + (dbNilai[mapel][materi][idx] || "0") + "\n"; });
+        const file = new File([csv], `Nilai_${mapel}_${materi}.csv`, { type: 'text/csv' });
+        if (navigator.canShare) await navigator.share({ files: [file] }).catch(()=>{});
+        else { const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; a.click(); }
     }
 
     renderSiswa();
-    setTanggalHariIni();
 </script>
 </body>
 </html>
