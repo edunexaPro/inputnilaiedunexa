@@ -13,40 +13,29 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        :root { --primary: #4f46e5; --brand: #1e293b; --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 50%, #e2e8f0 100%); --danger: #ef4444; }
 
-        :root { 
-            --primary: #4f46e5; 
-            --primary-hover: #4338ca;
-            --brand: #1e293b; 
-            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 50%, #e2e8f0 100%);
-            --card-bg: rgba(255, 255, 255, 0.65);
-            --card-border: rgba(255, 255, 255, 0.8);
-            --danger: #ef4444; 
-            --gray: #64748b; 
-        }
+        /* --- STYLING GERBANG AKTIVASI --- */
+        #activationGate { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f1f5f9; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .gate-box { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
+        .gate-box h2 { color: var(--brand); margin-bottom: 20px; }
+        .id-box { background: #e0e7ff; padding: 15px; border-radius: 10px; font-weight: 800; font-family: monospace; font-size: 18px; margin-bottom: 20px; color: var(--primary); letter-spacing: 2px; }
 
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg-gradient); background-attachment: fixed; margin: 0; padding: 16px; padding-bottom: 110px; color: #334155; }
         .header { text-align: center; padding: 20px 0 15px 0; }
         .header h1 { margin: 0; font-size: 24px; color: var(--brand); font-weight: 800; }
-        
-        .card { background: var(--card-bg); backdrop-filter: blur(16px); padding: 20px; border-radius: 20px; border: 1px solid var(--card-border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); margin-bottom: 20px; }
-        
-        /* Layout Badge Kecil di Kanan */
+        .card { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(16px); padding: 20px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.8); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); margin-bottom: 20px; }
         .siswa-info-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .jml-badge { background: #fee2e2; color: var(--danger); padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; }
         h3 { margin: 0; font-size: 14px; color: var(--brand); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
-        
         label { font-size: 12px; font-weight: 700; color: #475569; margin-left: 5px; display: block; margin-bottom: 6px; }
         select, input[type="text"], input[type="date"], textarea { width: 100%; padding: 14px 16px; margin-bottom: 16px; background: rgba(255, 255, 255, 0.9); border: 1px solid #cbd5e1; border-radius: 14px; box-sizing: border-box; font-size: 15px; color: var(--brand); }
-
         .history-box { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
-        .badge { background: rgba(255, 255, 255, 0.8); color: var(--gray); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .badge { background: rgba(255, 255, 255, 0.8); color: #64748b; padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 700; border: 1px solid #cbd5e1; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .btn-delete-badge { color: #ef4444; font-weight: 800; font-size: 16px; line-height: 1; }
-        
         .siswa-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 8px; border-bottom: 1px solid rgba(203, 213, 225, 0.5); }
         .nama-siswa { flex: 1; font-size: 15px; color: var(--brand); font-weight: 600; }
         .nilai-input { width: 70px !important; text-align: center; font-weight: 800; font-size: 16px; border: 2px solid transparent !important; color: var(--primary); height: 48px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-
         .footer { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px); padding: 16px 20px 24px 20px; display: flex; gap: 12px; z-index: 100; border-top: 1px solid rgba(255,255,255,0.5); }
         button { border: none; font-weight: 800; cursor: pointer; padding: 16px; border-radius: 16px; }
         .btn-side { background: #cbd5e1; color: var(--brand); flex: 1; }
@@ -57,7 +46,17 @@
 </head>
 <body>
 
-<div id="inputArea">
+<div id="activationGate">
+    <div class="gate-box">
+        <h2>Aktivasi Edunexa</h2>
+        <p style="font-size: 13px;">Masukkan kode aktivasi untuk perangkat Anda:</p>
+        <div class="id-box" id="myDeviceId">---</div>
+        <input type="text" id="activationCode" placeholder="Masukkan Kode Aktivasi">
+        <button class="btn-main" style="width: 100%" onclick="checkActivation()">AKTIFKAN</button>
+    </div>
+</div>
+
+<div id="inputArea" style="display:none;">
     <div class="header">
         <img src="https://i.ibb.co/YSHKvYQ/logo.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/5402/5402377.png'" alt="Logo" style="width: 85px; height: 85px; object-fit: contain; margin-bottom: 12px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.08));">
         <h1>INPUT NILAI EDUNEXA</h1>
@@ -107,10 +106,59 @@
 </div>
 
 <script>
+    // --- KONFIGURASI AKTIVASI ---
+    const SECRET_SALT = "TOMY-EDUNEXA-2026"; // JANGAN UBAH INI JIKA SUDAH JALAN
+
+    function getDeviceId() {
+        let id = localStorage.getItem('edx_device_id');
+        if (!id) {
+            id = 'DX-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+            localStorage.setItem('edx_device_id', id);
+        }
+        return id;
+    }
+
+    function generateKey(deviceId) {
+        // Rumus sederhana: Base64 dari (ID + SALT) ambil 8 karakter
+        return btoa(deviceId + SECRET_SALT).substring(0, 8);
+    }
+
+    // Fungsi helper untuk admin (Bapak) di Console Browser:
+    function generateCode() {
+        const id = getDeviceId();
+        const code = generateKey(id);
+        console.log("Kode untuk perangkat " + id + " adalah: " + code);
+        alert("Kode untuk " + id + " adalah: " + code);
+    }
+
+    function checkActivation() {
+        const input = document.getElementById('activationCode').value.trim();
+        const correct = generateKey(getDeviceId());
+        if (input === correct) {
+            localStorage.setItem('edx_activated', 'true');
+            document.getElementById('activationGate').style.display = 'none';
+            document.getElementById('inputArea').style.display = 'block';
+            location.reload();
+        } else {
+            alert("Kode tidak valid!");
+        }
+    }
+
+    // Cek status saat loading
+    window.onload = function() {
+        if (localStorage.getItem('edx_activated') === 'true') {
+            document.getElementById('activationGate').style.display = 'none';
+            document.getElementById('inputArea').style.display = 'block';
+            initApp();
+        } else {
+            document.getElementById('myDeviceId').innerText = getDeviceId();
+        }
+    };
+
+    // --- LOGIKA APLIKASI UTAMA (SAMA) ---
     let dbNilai = JSON.parse(localStorage.getItem('db_edunexa_v8')) || {};
     let daftarSiswa = JSON.parse(localStorage.getItem('db_siswa_v8')) || [];
 
-    // --- LOGIKA UTAMA ---
     function refreshRiwayat() {
         const mapel = document.getElementById('mapel').value;
         const box = document.getElementById('riwayatMateri');
@@ -130,7 +178,7 @@
 
     function hapusMateri(e, namaMateri) {
         e.stopPropagation();
-        if(confirm("Apakah Anda yakin ingin menghapus materi '" + namaMateri + "'?")) {
+        if(confirm("Hapus materi '" + namaMateri + "'?")) {
             const mapel = document.getElementById('mapel').value;
             delete dbNilai[mapel][namaMateri];
             localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
@@ -161,7 +209,6 @@
         }
     }
 
-    // --- FUNGSI PENDUKUNG ---
     function initApp() { renderSiswa(); setTanggalHariIni(); }
     function setTanggalHariIni() { document.getElementById('tanggal').value = new Date().toISOString().split('T')[0]; }
     function toggleSetup() { document.getElementById('inputArea').style.display = document.getElementById('inputArea').style.display === 'none' ? 'block' : 'none'; document.getElementById('setupArea').style.display = document.getElementById('setupArea').style.display === 'none' ? 'block' : 'none'; }
@@ -176,6 +223,7 @@
             row.innerHTML = `<div class="nama-siswa">${idx + 1}. ${nama}</div><input type="number" class="nilai-input" onfocus="this.select()">`;
             container.appendChild(row);
         });
+        document.getElementById('rawSiswa').value = daftarSiswa.join('\n');
         refreshRiwayat();
     }
     function loadMateriLama(namaMateri) {
@@ -199,8 +247,6 @@
         if (navigator.canShare) await navigator.share({ files: [file] }).catch(()=>{});
         else { const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; a.click(); }
     }
-
-    initApp();
 </script>
 </body>
 </html>
