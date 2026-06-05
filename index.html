@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edunexa Pro v8 - Tomy Satria</title>
     
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#4f46e5">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Edunexa Pro">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5402/5402377.png">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Edunexa%20Pro%22,%22short_name%22:%22Edunexa%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23e2e8f0%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/5402/5402377.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -32,7 +31,7 @@
         
         .card { background: var(--card-bg); backdrop-filter: blur(16px); padding: 20px; border-radius: 20px; border: 1px solid var(--card-border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); margin-bottom: 20px; }
         
-        /* Layout Badge kembali ke Kanan & Kecil & Merah */
+        /* Layout Badge Kecil di Kanan */
         .siswa-info-flex { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .jml-badge { background: #fee2e2; color: var(--danger); padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 800; }
         h3 { margin: 0; font-size: 14px; color: var(--brand); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
@@ -131,11 +130,13 @@
 
     function hapusMateri(e, namaMateri) {
         e.stopPropagation();
-        const mapel = document.getElementById('mapel').value;
-        delete dbNilai[mapel][namaMateri];
-        localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
-        kosongkanForm();
-        refreshRiwayat();
+        if(confirm("Apakah Anda yakin ingin menghapus materi '" + namaMateri + "'?")) {
+            const mapel = document.getElementById('mapel').value;
+            delete dbNilai[mapel][namaMateri];
+            localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
+            kosongkanForm();
+            refreshRiwayat();
+        }
     }
 
     function simpanKeHP() {
@@ -152,10 +153,12 @@
     }
 
     function resetSemester() {
-        dbNilai = {};
-        localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
-        renderSiswa(); 
-        toggleSetup();
+        if(confirm("Hapus seluruh database nilai?")) {
+            dbNilai = {};
+            localStorage.setItem('db_edunexa_v8', JSON.stringify(dbNilai));
+            renderSiswa(); 
+            toggleSetup();
+        }
     }
 
     // --- FUNGSI PENDUKUNG ---
