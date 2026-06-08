@@ -10,10 +10,10 @@
     <meta name="apple-mobile-web-app-title" content="Input Edunexa">
     
     <!-- Link Icon yang dibaca oleh HP Apple / iPhone -->
-    <link rel="apple-touch-icon" href="https://i.ibb.co/YSHKvYQ/Chat-GPT-Image-5-Jun-2026-22-30-27.png">
+    <link rel="apple-touch-icon" href="./EDUNEXA.png">
     
     <!-- Manifest yang dibaca oleh HP Android saat diinstal ke Layar Utama -->
-  <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Input%20Nilai%22,%22short_name%22:%22GuruKelas%22,%22start_url%22:%22./index.html%22,%22display%22:%22standalone%22,%22background_color%22:%22%23e2e8f0%22,%22theme_color%22:%22%234f46e5%22,%22icons%22:[{%22src%22:%22https://i.ibb.co/YSHKvYQ/Chat-GPT-Image-5-Jun-2026-22-30-27.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+    <link rel="manifest" href="./manifest.json">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -62,14 +62,23 @@
         .btn-main { background: var(--primary); color: white; flex: 2; }
         .btn-outline { background: white; border: 1px solid #cbd5e1; width: 100%; padding: 14px; border-radius: 14px; }
         .btn-danger { background: #fef2f2; color: var(--danger); border: 1px solid #fecaca; width: 100%; margin-top: 25px; padding: 14px; border-radius: 14px; }
+
+        /* --- STYLING TOMBOL INSTAL PWA --- */
+        .btn-install-pwa { background: #10b981; color: white; border: none; padding: 14px 20px; border-radius: 14px; font-weight: 800; cursor: pointer; display: none; margin: 0 auto 20px auto; width: 100%; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .btn-install-pwa:hover { background: #059669; }
     </style>
 </head>
 <body>
 
+<!-- Tombol Instal Pintar (Hanya muncul jika diakses via web) -->
+<div style="padding: 0 16px;">
+    <button id="installBtn" class="btn-install-pwa" onclick="installPWA()">⬇️ INSTAL EDUNEXA KE PERANGKAT</button>
+</div>
+
 <div id="activationGate" style="display:none;">
     <div class="gate-card">
         <!-- Logo di Gerbang Aktivasi -->
-<img src="./EDUNEXA.png" alt="Logo" style="width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px;">
+        <img src="./EDUNEXA.png" alt="Logo" style="width: 70px; height: 70px; object-fit: contain; margin-bottom: 10px;">
         <h2 style="margin-top: 0; color: var(--brand);">Aktivasi Edunexa</h2>
         <p style="font-size: 13px; color: #475569;">Berikan ID ini ke Admin:</p>
         <div class="gate-id" id="myDeviceId">---</div>
@@ -274,6 +283,56 @@
         const file = new File([csv], `Nilai_${mapel}_${materi}.csv`, { type: 'text/csv' });
         if (navigator.canShare) await navigator.share({ files: [file] }).catch(()=>{});
         else { const a = document.createElement('a'); a.href = URL.createObjectURL(file); a.download = file.name; a.click(); }
+    }
+
+    /* --- LOGIKA PWA & INSTALASI PINTAR --- */
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW Error:', err));
+        });
+    }
+
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    
+    // Deteksi apakah pengguna menggunakan iPhone/iPad (iOS)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    // Deteksi apakah aplikasi sudah diinstal
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    if (isStandalone) {
+        if(installBtn) installBtn.style.display = 'none';
+    } else if (isIOS) {
+        if(installBtn) {
+            installBtn.style.display = 'block';
+            installBtn.innerText = "⬇️ CARA INSTAL DI IPHONE";
+            installBtn.style.background = "#000000"; 
+        }
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if(installBtn) {
+            installBtn.style.display = 'block';
+            installBtn.innerText = "⬇️ INSTAL EDUNEXA KE PERANGKAT";
+        }
+    });
+
+    function installPWA() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    installBtn.style.display = 'none';
+                }
+                deferredPrompt = null;
+            });
+        } else if (isIOS) {
+            alert("🍏 CARA INSTAL DI IPHONE:\n\n1. Buka link ini di browser Safari.\n2. Ketuk ikon 'Share' (kotak dengan panah ke atas) di bagian bawah layar.\n3. Gulir ke bawah dan ketuk 'Tambahkan ke Layar Utama' (Add to Home Screen).");
+        } else {
+            alert("🤖 CARA INSTAL MANUAL:\n\n1. Pastikan Anda membukanya di Google Chrome.\n2. Klik ikon 'Titik Tiga' di pojok kanan atas.\n3. Pilih 'Tambahkan ke Layar Utama' atau 'Instal Aplikasi'.");
+        }
     }
 </script>
 </body>
